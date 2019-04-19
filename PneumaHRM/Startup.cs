@@ -44,6 +44,10 @@ namespace PneumaHRM
             app.UseHttpsRedirection();
             app.UseMvc();
             app.UseStaticFiles();
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "wwwroot";
+            });
         }
     }
 }

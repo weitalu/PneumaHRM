@@ -1,8 +1,11 @@
 {
   "scripts": {
-    "build": "parcel build index.html -d ../wwwroot"
+    "build": "parcel build index.html -d ../wwwroot --detailed-report"
   },
   "devDependencies": {
+    "@types/react": "^16.8.13",
+    "@types/react-dom": "^16.8.4",
+    "@types/react-router-dom": "^4.3.2",
     "parcel": "^1.12.3",
     "typescript": "^3.4.3"
   },
