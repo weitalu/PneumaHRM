@@ -24,21 +24,30 @@ import { Link, Route } from 'react-router-dom'
 import Dashboard from './dashboard/index'
 import LeaveRequest from './leaverequest/index'
 const drawerWidth = 240;
-
+const routes = [
+    {
+        path: "/dashboard",
+        exact: true,
+        header: () => "Dashboard",
+        content: Dashboard,
+        icon: DashboardIcon
+    },
+    {
+        path: "/leaverequest",
+        header: () => "Leave Request",
+        content: LeaveRequest,
+        icon: NoteAddIcon
+    }
+];
 const mainListItems = (
     <div>
-        <ListItem button component={Link} to="/dashboard">
-            <ListItemIcon>
-                <DashboardIcon />
-            </ListItemIcon>
-            <ListItemText primary="Dashboard" />
-        </ListItem>
-        <ListItem button component={Link} to="/leaverequest">
-            <ListItemIcon>
-                <NoteAddIcon />
-            </ListItemIcon>
-            <ListItemText primary="Leave Request" />
-        </ListItem>
+        {routes.map((route) =>
+            (<ListItem button component={Link} to={route.path}>
+                <ListItemIcon>
+                    <route.icon></route.icon>
+                </ListItemIcon>
+                <ListItemText primary={route.header()} />
+            </ListItem>)}
     </div>
 );
 
@@ -54,13 +63,21 @@ export default class App extends React.Component {
                         aria-label="Open drawer">
                         <MenuIcon />
                     </IconButton>
-                    <Typography
-                        component="h1"
-                        variant="h6"
-                        color="inherit"
-                        noWrap>
-                        Haha
-                    </Typography>
+                    {routes.map((route, index) => (
+                        <Route
+                            key={index}
+                            path={route.path}
+                            exact={route.exact}
+                            render={() => <Typography
+                                component="h1"
+                                variant="h6"
+                                color="inherit"
+                                noWrap>
+                                {route.header()}
+                            </Typography>}
+                        />
+                    ))}
+
                 </Toolbar>
             </AppBar>
             <Drawer
@@ -78,8 +95,11 @@ export default class App extends React.Component {
             </Drawer>
 
             <main style={{ marginLeft: `${drawerWidth}px`, marginTop: "100px" }}>
-                <Route path="/dashboard" exact component={Dashboard} />
-                <Route path="/leaverequest" component={LeaveRequest} />
+                {routes.map((route, index) =>
+                    (<Route
+                        path={route.path}
+                        exact={route.exact}
+                        component={route.content} />))}
             </main>
         </div>
     }
