@@ -12,7 +12,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import MenuIcon from '@material-ui/icons/Menu'
 import NotificationsIcon from '@material-ui/icons/Notifications'
 import DashboardIcon from '@material-ui/icons/Dashboard';
@@ -23,6 +23,7 @@ import { Link, Route } from 'react-router-dom'
 
 import Dashboard from './dashboard/index'
 import LeaveRequest from './leaverequest/index'
+const drawerWidth = 240;
 
 const mainListItems = (
     <div>
@@ -45,7 +46,8 @@ export default class App extends React.Component {
     render() {
         return <div>
             <CssBaseline />
-            <AppBar position="absolute">
+            <AppBar position="absolute"
+                style={{ width: `calc(100% - ${drawerWidth}px)`, marginLeft: drawerWidth }}>
                 <Toolbar>
                     <IconButton
                         color="inherit"
@@ -59,15 +61,12 @@ export default class App extends React.Component {
                         noWrap>
                         Haha
                     </Typography>
-                    <IconButton color="inherit">
-                        <Badge badgeContent={4} color="secondary">
-                            <NotificationsIcon />
-                        </Badge>
-                    </IconButton>
                 </Toolbar>
             </AppBar>
             <Drawer
                 variant="permanent"
+                style={{ position: 'relative', whiteSpace: 'nowrap', width: drawerWidth }}
+                open
             >
                 <div>
                     <IconButton>
@@ -78,7 +77,7 @@ export default class App extends React.Component {
                 <List>{mainListItems}</List>
             </Drawer>
 
-            <main>
+            <main style={{ marginLeft: `${drawerWidth}px`, marginTop: "100px" }}>
                 <Route path="/dashboard" exact component={Dashboard} />
                 <Route path="/leaverequest" component={LeaveRequest} />
             </main>
