@@ -30,7 +30,8 @@ namespace PneumaHRM.Controllers
                         x.Guid,
                         x.ContextType,
                         x.DisplayName,
-                        x.Description
+                        x.Description,
+                        x.DistinguishedName
                     })
                     .ToList();
 
