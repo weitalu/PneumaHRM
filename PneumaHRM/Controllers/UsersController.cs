@@ -12,7 +12,7 @@ namespace PneumaHRM.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class UsersController : ControllerBase
     {
         // GET api/values
         [HttpGet]

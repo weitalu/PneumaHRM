@@ -12,7 +12,7 @@ namespace PneumaHRMTests
         {
             var start = new DateTime(2019, 3, 1, 9, 0, 0);
             var end = new DateTime(2019, 3, 1, 18, 0, 0);
-            var holidays = new List<Holiday>();
+            var holidays = new List<DateTime>();
 
             var hours = holidays.GetWorkHours(start, end);
 
@@ -35,11 +35,11 @@ namespace PneumaHRMTests
         [InlineData("2019-02-28T07:30:00", "2019-03-07T20:30:00", 40)]
         public void Theory(string start, string end, decimal expectHour)
         {
-            var holidays = new List<Holiday>()
+            var holidays = new List<DateTime>()
             {
-                new Holiday(){ Value = new DateTime(2019,2,28) },
-                new Holiday(){ Value = new DateTime(2019,3,4) },
-                new Holiday(){ Value = new DateTime(2019,3,7) }
+                 new DateTime(2019,2,28),
+                 new DateTime(2019,3,4),
+                 new DateTime(2019,3,7)
             };
 
             var hours = holidays.GetWorkHours(DateTime.Parse(start), DateTime.Parse(end));

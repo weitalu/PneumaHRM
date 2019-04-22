@@ -7,13 +7,17 @@ namespace PneumaHRM.Models
 {
     public static class HRMUtility
     {
-        public static decimal GetWorkHours(this List<Holiday> holidays, DateTime start, DateTime end)
+        public static decimal GetWorkHours(this List<DateTime> holidays, DateTime start, DateTime end)
         {
             var period = end - start;
             var days = (int)Math.Floor(period.TotalMinutes / 1440);
             var hours = Math.Min((decimal)((period.TotalMinutes % 1440) / 60), 8m);
 
-            var holidaycount = holidays.Where(x => x.Value <= end.Date && x.Value >= start.Date).Count();
+            var holidaycount = holidays
+                .Where(x => x <= end.Date && x >= start.Date)
+                .Select(x => x.Date)
+                .Distinct()
+                .Count();
 
             return Math.Max(((days - holidaycount) * 8 + hours), 0);
         }
