@@ -17,6 +17,7 @@ import MenuIcon from '@material-ui/icons/Menu'
 import NotificationsIcon from '@material-ui/icons/Notifications'
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import NoteAddIcon from '@material-ui/icons/NoteAdd';
+import AccountBalance from '@material-ui/icons/AccountBalance'
 //import {AppBar} from '@material-ui/core' all the package will be boundled 
 
 import { Link, Route } from 'react-router-dom'
@@ -31,6 +32,12 @@ const routes = [
         header: () => "Dashboard",
         content: Dashboard,
         icon: DashboardIcon
+    },
+    {
+        path: "/balance",
+        header: () => "Leave Balance",
+        content: () => <></>,
+        icon: AccountBalance
     },
     {
         path: "/leaverequest",
