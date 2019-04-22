@@ -15,7 +15,7 @@ namespace PneumaHRM.Models
 
             var holidaycount = holidays.Where(x => x.Value <= end.Date && x.Value >= start.Date).Count();
 
-            return ((days - holidaycount) * 8 + hours);
+            return Math.Max(((days - holidaycount) * 8 + hours), 0);
         }
     }
 }
