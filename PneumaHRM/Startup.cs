@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using PneumaHRM.Models;
 
 namespace PneumaHRM
 {
@@ -18,6 +19,10 @@ namespace PneumaHRM
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            using (var context = new HrmDbContext())
+            {
+                context.Database.EnsureCreated();
+            }
         }
 
         public IConfiguration Configuration { get; }
@@ -26,6 +31,9 @@ namespace PneumaHRM
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services
+                .AddEntityFrameworkSqlServer()
+                .AddDbContext<HrmDbContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

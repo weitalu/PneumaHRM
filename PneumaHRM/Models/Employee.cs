@@ -10,8 +10,9 @@ namespace PneumaHRM.Models
         public int Id { get; set; }
         public string ADPrincipalName { get; set; }
         public bool isActive { get; set; }
+        public DateTime? OnboardDate { get; set; }
 
-        public List<Leave> AvailableLeaves { get; set; }
+        public List<LeaveBalance> Balances { get; set; }
         public List<LeaveRequest> Leaves { get; set; }
         public List<LeaveRequestApprove> Approves { get; set; }
         public List<LeaveRequestDeputy> Deputies { get; set; }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,7 +18,7 @@ namespace PneumaHRM.Models
         public LeaveRequestState State { get; set; }
         public LeaveType Type { get; set; }
 
-        public int RequestIssuerId { get; set; }
+        public int? RequestIssuerId { get; set; }
         public Employee RequestIssuer { get; set; }
 
         public List<LeaveRequestDeputy> Deputies { get; set; }
@@ -29,6 +30,11 @@ namespace PneumaHRM.Models
 
     }
 
-    public enum LeaveType { }
-    public enum LeaveRequestState { }
+    public enum LeaveType
+    {
+        Annual, OverTime, Sick, Personal, Other
+    }
+    public enum LeaveRequestState
+    {
+    }
 }

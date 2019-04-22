@@ -9,10 +9,10 @@ namespace PneumaHRM.Models
     {
         public int Id { get; set; }
 
-        public int RequestId { get; set; }
+        public int? RequestId { get; set; }
         public LeaveRequest Request { get; set; }
 
-        public int ApproveById { get; set; }
+        public int? ApproveById { get; set; }
         public Employee ApproveBy { get; set; }
     }
 }

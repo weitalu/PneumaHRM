@@ -9,5 +9,6 @@ namespace PneumaHRM.Models
     {
         public DateTime CreateOn { get; set; } = DateTime.Now;
         public DateTime? UpdateOn { get; set; } = null;
+        public string CreatedBy { get; set; }
     }
 }

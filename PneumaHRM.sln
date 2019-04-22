@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PneumaHRM", "PneumaHRM\PneumaHRM.csproj", "{27DAE585-5665-4F41-A971-3361F3E8178B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PneumaHRM", "PneumaHRM\PneumaHRM.csproj", "{27DAE585-5665-4F41-A971-3361F3E8178B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PneumaHRMTests", "PneumaHRMTests\PneumaHRMTests.csproj", "{4DE79CF8-DF3F-4C68-9008-2922B2E16BE0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{27DAE585-5665-4F41-A971-3361F3E8178B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27DAE585-5665-4F41-A971-3361F3E8178B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27DAE585-5665-4F41-A971-3361F3E8178B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DE79CF8-DF3F-4C68-9008-2922B2E16BE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DE79CF8-DF3F-4C68-9008-2922B2E16BE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DE79CF8-DF3F-4C68-9008-2922B2E16BE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DE79CF8-DF3F-4C68-9008-2922B2E16BE0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
