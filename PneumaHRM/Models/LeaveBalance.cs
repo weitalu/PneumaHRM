@@ -12,9 +12,7 @@ namespace PneumaHRM.Models
         public decimal Value { get; set; }
         public string Description { get; set; }
         public DateTime ValidThru { get; set; }
-
         public string SnapShotData { get; set; }
-
         public int? OwnerId { get; set; }
         public Employee Owner { get; set; }
     }
@@ -23,6 +21,7 @@ namespace PneumaHRM.Models
     {
         public LeaveBalanceType()
         {
+            Field(x => x.Description);
             Field(x => x.Value);
         }
     }

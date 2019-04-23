@@ -25,10 +25,9 @@ namespace PneumaHRM.Models
                 "employees",
                 resolve: ctx =>
                 {
-                    using (var db = new HrmDbContext())
-                    {
-                        return db.Employees.ToList();
-                    };
+                    var hrmCtx = ctx.UserContext as HrmContext;
+                    var db = hrmCtx.DbContext;
+                    return db.Employees.ToList();
                 });
 
             Field<EmployeeType>(

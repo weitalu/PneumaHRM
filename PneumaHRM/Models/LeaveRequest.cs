@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GraphQL.Types;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -36,5 +37,31 @@ namespace PneumaHRM.Models
     }
     public enum LeaveRequestState
     {
+    }
+
+    public class LeaveRequestType : ObjectGraphType<LeaveRequest>
+    {
+        public LeaveRequestType()
+        {
+            Field<StringGraphType>("name", resolve: ctx => "123");
+            Field<DateTimeGraphType>("from", resolve: ctx => ctx.Source.Start);
+            Field(x => x.Name);
+            Field<DecimalGraphType>("WorkHour",
+                resolve: ctx =>
+                {
+                    var db = (ctx.UserContext as HrmContext).DbContext;
+                    if (ctx.Source.End.HasValue && ctx.Source.Start.HasValue)
+                    {
+                        return db.Holidays
+                        .Select(x => x.Value)
+                        .ToList()
+                        .GetWorkHours(ctx.Source.Start.Value, ctx.Source.End.Value);
+                    }
+                    else
+                    {
+                        return 0m;
+                    }
+                });
+        }
     }
 }

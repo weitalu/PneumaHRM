@@ -32,7 +32,16 @@ namespace PneumaHRM.Models
                   var employeeId = context.Source.Id;
                   return db.LeaveBalances.Where(x => x.OwnerId == employeeId).ToList();
               },
-              description: "Player's skater stats");
+              description: "your leave balance history");
+
+            Field<ListGraphType<LeaveRequestType>>("leaveRequests",
+              resolve: context =>
+              {
+                  var db = (context.UserContext as HrmContext).DbContext;
+                  var employeeId = context.Source.Id;
+                  return db.LeaveRequests.Where(x => x.RequestIssuerId == employeeId).ToList();
+              },
+              description: "your current leave request");
 
         }
     }
