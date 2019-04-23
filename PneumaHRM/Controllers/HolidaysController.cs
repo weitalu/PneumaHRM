@@ -37,34 +37,11 @@ namespace PneumaHRM.Controllers
         }
         [Route("Import")]
         [HttpPost]
-        public int ImportHolidays(List<Holiday> data)
+        public int ImportHolidays(List<HolidayDTO> data)
         {
-            foreach (var holiday in data.Where(x => x.IsHoliday == "是").OrderBy(x => x.Date))
-            {
-                var toUpdate = _db.Holidays.Where(x => x.Value.Date == holiday.Date.Date).Count();
-
-                if (toUpdate == 0)
-                {
-                    var desc = $"{holiday.HolidayCategory}. {holiday.Description}".Trim();
-                    _db.Holidays.Add(new Models.Holiday()
-                    {
-                        Name = holiday.Name,
-                        Description = desc,
-                        Value = holiday.Date
-                    });
-                }
-            }
-            return _db.SaveChanges();
+            return _db.ImportHoliday(data);
         }
 
 
-        public class Holiday
-        {
-            public DateTime Date { get; set; }
-            public string Name { get; set; }
-            public string IsHoliday { get; set; }
-            public string HolidayCategory { get; set; }
-            public string Description { get; set; }
-        }
     }
 }

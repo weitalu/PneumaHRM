@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using GraphiQl;
+using GraphQL;
+using GraphQL.Types;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -22,17 +25,6 @@ namespace PneumaHRM
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-            using (var context = new HrmDbContext())
-            {
-                context.Database.EnsureCreated();
-                if (context.Holidays.Count() == 0)
-                {
-                    var json = File.ReadAllText("InitData/Holidays.json");
-                    var data = JArray.Parse(json).ToObject<List<Controllers.HolidaysController.Holiday>>();
-                    var ctrl = new Controllers.HolidaysController(context);
-                    ctrl.ImportHolidays(data);
-                }
-            }
         }
 
         public IConfiguration Configuration { get; }
@@ -44,10 +36,12 @@ namespace PneumaHRM
             services
                 .AddEntityFrameworkSqlServer()
                 .AddDbContext<HrmDbContext>();
+            services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
+            services.AddSingleton<ISchema>(new HrmSchema());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, HrmDbContext db)
         {
             if (env.IsDevelopment())
             {
@@ -59,13 +53,38 @@ namespace PneumaHRM
                 app.UseHsts();
             }
             app.UseAuthentication();
+            app.Use(async (context, next) =>
+            {
+                var Id = context.User.Identity;
+                if (Id.IsAuthenticated)
+                {
+                    var dbCtx = context.RequestServices.GetService<HrmDbContext>();
+                    var user = dbCtx.Employees.Where(x => x.ADPrincipalName == Id.Name).FirstOrDefault();
+                    if (user == null)
+                    {
+                        dbCtx.Employees.Add(new Employee()
+                        {
+                            ADPrincipalName = Id.Name,
+                            isActive = true
+                        });
+                        dbCtx.SaveChanges();
+                    }
+                }
+                // Do work that doesn't write to the Response.
+                await next.Invoke();
+                // Do logging or other work that doesn't write to the Response.
+            });
             app.UseHttpsRedirection();
+            app.UseGraphiQl("/GraphiQL", "/api/graphql");
+
             app.UseMvc();
             app.UseStaticFiles();
             app.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "wwwroot";
             });
+            db.SeedData();
+            ;
         }
     }
 }

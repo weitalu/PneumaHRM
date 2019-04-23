@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GraphQL.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,5 +18,22 @@ namespace PneumaHRM.Models
         public List<LeaveRequestApprove> Approves { get; set; }
         public List<LeaveRequestDeputy> Deputies { get; set; }
         public List<LeaveRequestComment> RequestComments { get; set; }
+    }
+
+    public class EmployeeType : ObjectGraphType<Employee>
+    {
+        public EmployeeType()
+        {
+            Field(x => x.ADPrincipalName);
+            Field<ListGraphType<LeaveBalanceType>>("leaveBalances",
+              resolve: context =>
+              {
+                  var db = (context.UserContext as HrmContext).DbContext;
+                  var employeeId = context.Source.Id;
+                  return db.LeaveBalances.Where(x => x.OwnerId == employeeId).ToList();
+              },
+              description: "Player's skater stats");
+
+        }
     }
 }

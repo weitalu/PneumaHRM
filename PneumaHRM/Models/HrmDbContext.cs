@@ -10,7 +10,7 @@ namespace PneumaHRM.Models
     {
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Holiday> Holidays { get; set; }
-        public DbSet<LeaveBalance> Leaves { get; set; }
+        public DbSet<LeaveBalance> LeaveBalances { get; set; }
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
         public DbSet<LeaveRequestApprove> LeaveRequestApproves { get; set; }
         public DbSet<LeaveRequestComment> LeaveRequestComments { get; set; }

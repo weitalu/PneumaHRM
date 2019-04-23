@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GraphQL.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,4 +19,11 @@ namespace PneumaHRM.Models
         public Employee Owner { get; set; }
     }
 
+    public class LeaveBalanceType : ObjectGraphType<LeaveBalance>
+    {
+        public LeaveBalanceType()
+        {
+            Field(x => x.Value);
+        }
+    }
 }
