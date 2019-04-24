@@ -12,6 +12,7 @@ namespace PneumaHRM.Models
         public HrmSchema()
         {
             Query = new HrmQuery();
+            Mutation = new HrmMutation();
         }
     }
 }

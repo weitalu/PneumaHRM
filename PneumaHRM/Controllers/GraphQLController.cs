@@ -40,6 +40,8 @@ namespace PneumaHRM.Controllers
 
             var result = await _documentExecuter.ExecuteAsync(executionOptions).ConfigureAwait(false);
 
+            _db.SaveChanges();
+
             if (result.Errors?.Count > 0)
             {
                 return BadRequest(result);

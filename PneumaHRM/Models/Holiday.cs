@@ -29,6 +29,7 @@ namespace PneumaHRM.Models
         {
             Field(x => x.Name, true);
             Field(x => x.Value);
+            Field(x => x.Description);
         }
     }
 }

@@ -29,12 +29,6 @@ namespace PneumaHRM.Controllers
                 .ToList()
                 .GetWorkHours(start, end);
         }
-        [Route("Index")]
-        [HttpGet]
-        public List<object> GetHolidays(DateTime? start = null, DateTime? end = null)
-        {
-            return new List<object>();
-        }
         [Route("Import")]
         [HttpPost]
         public int ImportHolidays(List<HolidayDTO> data)

@@ -37,16 +37,36 @@ namespace PneumaHRM.Models
     }
     public enum LeaveRequestState
     {
+        New, Balanced
     }
+    public class LeaveRequestInputType : InputObjectGraphType<LeaveRequest>
+    {
+        public LeaveRequestInputType()
+        {
+            Name = "LeaveRequestInput";
+            Description = "A leave request";
 
+            Field(x => x.Name, nullable: true)
+                .Description("The name of the human.");
+            Field<DateTimeGraphType>()
+                .Name("start")
+                .Description("start time of the leave")
+                .Resolve(ctx => ctx.Source.Start);
+            Field<DateTimeGraphType>()
+                .Name("end")
+                .Description("end time of the leave")
+                .Resolve(ctx => ctx.Source.End); 
+        }
+    }
     public class LeaveRequestType : ObjectGraphType<LeaveRequest>
     {
         public LeaveRequestType()
         {
-            Field<StringGraphType>("name", resolve: ctx => "123");
+            Field<StringGraphType>("name", resolve: ctx => ctx.Source.Name);
             Field<DateTimeGraphType>("from", resolve: ctx => ctx.Source.Start);
+            Field<DateTimeGraphType>("to", resolve: ctx => ctx.Source.End);
             Field(x => x.Name);
-            Field<DecimalGraphType>("WorkHour",
+            Field<DecimalGraphType>("workHour",
                 resolve: ctx =>
                 {
                     var db = (ctx.UserContext as HrmContext).DbContext;
