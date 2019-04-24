@@ -15,9 +15,6 @@ namespace PneumaHRM.Models
 
         public List<LeaveBalance> Balances { get; set; }
         public List<LeaveRequest> Leaves { get; set; }
-        public List<LeaveRequestApprove> Approves { get; set; }
-        public List<LeaveRequestDeputy> Deputies { get; set; }
-        public List<LeaveRequestComment> RequestComments { get; set; }
     }
 
     public class EmployeeType : ObjectGraphType<Employee>
@@ -29,8 +26,8 @@ namespace PneumaHRM.Models
               resolve: context =>
               {
                   var db = (context.UserContext as HrmContext).DbContext;
-                  var employeeId = context.Source.Id;
-                  return db.LeaveBalances.Where(x => x.OwnerId == employeeId).ToList();
+                  var userName = (context.UserContext as HrmContext).UserContext.Identity.Name;
+                  return db.LeaveBalances.Where(x => x.Owner.ADPrincipalName == userName).ToList();
               },
               description: "your leave balance history");
 
@@ -38,8 +35,8 @@ namespace PneumaHRM.Models
               resolve: context =>
               {
                   var db = (context.UserContext as HrmContext).DbContext;
-                  var employeeId = context.Source.Id;
-                  return db.LeaveRequests.Where(x => x.RequestIssuerId == employeeId).ToList();
+                  var userName = (context.UserContext as HrmContext).UserContext.Identity.Name;
+                  return db.LeaveRequests.Where(x => x.RequestIssuer.ADPrincipalName == userName).ToList();
               },
               description: "your current leave requests");
 

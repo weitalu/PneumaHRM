@@ -15,5 +15,6 @@ namespace PneumaHRM.Models
         }
         public HrmDbContext DbContext { get; }
         public ClaimsPrincipal UserContext { get; }
+
     }
 }

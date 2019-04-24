@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GraphQL.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,7 +13,10 @@ namespace PneumaHRM.Models
         public int? RequestId { get; set; }
         public LeaveRequest Request { get; set; }
 
-        public int? ApproveById { get; set; }
-        public Employee ApproveBy { get; set; }
+        public string ApproveBy { get; set; }
+    }
+
+    public class LeaveRequestApproveType : ObjectGraphType<LeaveRequestApprove>
+    {
     }
 }

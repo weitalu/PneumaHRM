@@ -64,22 +64,14 @@ namespace PneumaHRM.Models
                 .HasForeignKey(x => x.RequestIssuerId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
-            modelBuilder.Entity<LeaveRequestDeputy>()
-                .HasOne(x => x.DeputyBy)
-                .WithMany(x => x.Deputies)
-                .HasForeignKey(x => x.DeputyById)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+
             modelBuilder.Entity<LeaveRequestDeputy>()
                 .HasOne(x => x.Request)
                 .WithMany(x => x.Deputies)
                 .HasForeignKey(x => x.RequestId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<LeaveRequestApprove>()
-                .HasOne(x => x.ApproveBy)
-                .WithMany(x => x.Approves)
-                .HasForeignKey(x => x.ApproveById)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+
             modelBuilder.Entity<LeaveRequestApprove>()
                 .HasOne(x => x.Request)
                 .WithMany(x => x.Approves)
@@ -87,11 +79,6 @@ namespace PneumaHRM.Models
                 .OnDelete(DeleteBehavior.Cascade);
 
 
-            modelBuilder.Entity<LeaveRequestComment>()
-                .HasOne(x => x.CommentBy)
-                .WithMany(x => x.RequestComments)
-                .HasForeignKey(x => x.CommentById)
-                .OnDelete(DeleteBehavior.ClientSetNull);
             modelBuilder.Entity<LeaveRequestComment>()
                 .HasOne(x => x.Request)
                 .WithMany(x => x.Comments)

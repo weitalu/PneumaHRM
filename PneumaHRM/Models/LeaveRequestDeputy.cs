@@ -13,7 +13,6 @@ namespace PneumaHRM.Models
         public int RequestId { get; set; }
         public LeaveRequest Request { get; set; }
 
-        public int? DeputyById { get; set; }
-        public Employee DeputyBy { get; set; }
+        public string DeputyBy { get; set; }
     }
 }

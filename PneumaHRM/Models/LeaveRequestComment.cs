@@ -13,7 +13,6 @@ namespace PneumaHRM.Models
         public int? RequestId { get; set; }
         public LeaveRequest Request { get; set; }
 
-        public int? CommentById { get; set; }
-        public Employee CommentBy { get; set; }
+        public string CommentBy { get; set; }
     }
 }
