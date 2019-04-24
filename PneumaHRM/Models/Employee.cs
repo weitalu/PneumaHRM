@@ -24,7 +24,7 @@ namespace PneumaHRM.Models
     {
         public EmployeeType()
         {
-            Field(x => x.ADPrincipalName);
+            Field(x => x.ADPrincipalName).Name("UserName");
             Field<ListGraphType<LeaveBalanceType>>("leaveBalances",
               resolve: context =>
               {
@@ -41,7 +41,7 @@ namespace PneumaHRM.Models
                   var employeeId = context.Source.Id;
                   return db.LeaveRequests.Where(x => x.RequestIssuerId == employeeId).ToList();
               },
-              description: "your current leave request");
+              description: "your current leave requests");
 
         }
     }

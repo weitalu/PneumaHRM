@@ -7,8 +7,11 @@ namespace PneumaHRM.Models
 {
     public abstract class Entity
     {
-        public DateTime CreateOn { get; set; } = DateTime.Now;
-        public DateTime? UpdateOn { get; set; } = null;
         public string CreatedBy { get; set; }
+        public DateTime CreateOn { get; set; } = DateTime.Now;
+        public string ModifiedBy { get; set; }
+        public DateTime? ModifiedOn { get; set; } = null;
+        
+        
     }
 }

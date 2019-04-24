@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,12 @@ namespace PneumaHRM.Models
 {
     public class HrmDbContext : DbContext
     {
+        private string createBy { get; }
+        public HrmDbContext(IHttpContextAccessor httpContextAccessor)
+        {
+            createBy = httpContextAccessor?.HttpContext?.User?.Identity?.Name ?? "System";
+        }
+
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Holiday> Holidays { get; set; }
         public DbSet<LeaveBalance> LeaveBalances { get; set; }
@@ -15,6 +22,26 @@ namespace PneumaHRM.Models
         public DbSet<LeaveRequestApprove> LeaveRequestApproves { get; set; }
         public DbSet<LeaveRequestComment> LeaveRequestComments { get; set; }
         public DbSet<LeaveRequestDeputy> LeaveRequestDeputies { get; set; }
+
+        public override int SaveChanges()
+        {
+            var entries = ChangeTracker.Entries().ToList();
+            var updated = entries
+                .Where(x => x.State == EntityState.Modified);
+            var added = entries
+                .Where(x => x.State == EntityState.Added);
+            foreach (var entity in updated)
+            {
+                ((Entity)entity.Entity).ModifiedBy = createBy;
+                ((Entity)entity.Entity).ModifiedOn = DateTime.Now;
+            }
+            foreach (var entity in added)
+            {
+                ((Entity)entity.Entity).CreatedBy = createBy;
+                ((Entity)entity.Entity).CreateOn = DateTime.Now;
+            }
+            return base.SaveChanges();
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -24,6 +51,7 @@ namespace PneumaHRM.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             modelBuilder.Entity<LeaveBalance>()
                 .HasOne(x => x.Owner)
                 .WithMany(x => x.Balances)

@@ -25,21 +25,17 @@ namespace PneumaHRM.Models
         }
         public static int ImportHoliday(this HrmDbContext db, List<HolidayDTO> data)
         {
-            foreach (var holiday in data.Where(x => x.IsHoliday == "是").OrderBy(x => x.Date))
-            {
-                var toUpdate = db.Holidays.Where(x => x.Value.Date == holiday.Date.Date).Count();
-
-                if (toUpdate == 0)
+            var holidays = db.Holidays.Select(x => x.Value.Date).ToList();
+            var toImport = data.Where(x => x.IsHoliday == "是")
+                .Where(x => ! holidays.Contains(x.Date.Date))
+                .Select(x => new Holiday()
                 {
-                    var desc = $"{holiday.HolidayCategory}. {holiday.Description}".Trim();
-                    db.Holidays.Add(new Models.Holiday()
-                    {
-                        Name = holiday.Name,
-                        Description = desc,
-                        Value = holiday.Date
-                    });
-                }
-            }
+                    Name = x.Name,
+                    Description = $"{x.HolidayCategory}. {x.Description}".Trim(),
+                    Value = x.Date
+                }).ToList();
+
+            db.Holidays.AddRange(toImport);
             return db.SaveChanges();
         }
         public static void SeedData(this HrmDbContext db)

@@ -32,8 +32,10 @@ namespace PneumaHRM.Controllers
             {
                 UserContext = new HrmContext(_db, User),
                 Schema = _schema,
+                OperationName = query.OperationName,
                 Query = query.Query,
-                Inputs = inputs
+                Inputs = inputs,
+                ExposeExceptions = true,
             };
 
             var result = await _documentExecuter.ExecuteAsync(executionOptions).ConfigureAwait(false);

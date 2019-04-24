@@ -15,10 +15,9 @@ namespace PneumaHRM.Models
                 "holidays",
                 resolve: ctx =>
                 {
-                    using (var db = new HrmDbContext())
-                    {
-                        return db.Holidays.ToList();
-                    }
+                    var hrmCtx = ctx.UserContext as HrmContext;
+                    var db = hrmCtx.DbContext;
+                    return db.Holidays.ToList();
                 });
 
             Field<ListGraphType<EmployeeType>>(
