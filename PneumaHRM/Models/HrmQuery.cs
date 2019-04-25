@@ -31,7 +31,7 @@ namespace PneumaHRM.Models
                     var db = hrmCtx.DbContext;
                     return db.LeaveRequests;
                 });
-            AddNavigationConnectionField(
+            AddQueryConnectionField(
                 "leaveRequestsConnection",
                 resolve: ctx =>
                 {

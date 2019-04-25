@@ -69,7 +69,6 @@ namespace PneumaHRM.Models
             Field<StringGraphType>("owner", resolve: ctx => ctx.Source.RequestIssuerId);
             Field<DateTimeGraphType>("from", resolve: ctx => ctx.Source.Start);
             Field<DateTimeGraphType>("to", resolve: ctx => ctx.Source.End);
-            Field(x => x.Name);
             Field<LeaveTypeEnum>("type", resolve: ctx => ctx.Source.Type);
             Field<LeaveRequestStateEnum>("state", resolve: ctx => ctx.Source.State);
             Field<DecimalGraphType>("workHour",

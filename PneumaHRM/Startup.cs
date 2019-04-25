@@ -88,7 +88,7 @@ namespace PneumaHRM
                 await next.Invoke();
                 // Do logging or other work that doesn't write to the Response.
             });
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseGraphiQl("/GraphiQL", "/api/graphql");
 
             app.UseMvc();

@@ -1,19 +1,26 @@
 {
   "scripts": {
-    "build": "parcel build index.html -d ../wwwroot --detailed-report"
+    "build": "parcel build index.html -d ../wwwroot --detailed-report",
+    "download":"apollo service:download graphql-schema.json --skipSSLValidation --endpoint=http://localhost:57755/api/graphql/",
+    "codegen": "apollo client:codegen Data --target=typescript --includes=src/**/*.ts --endpoint=http://localhost:57755/api/graphql/"
   },
   "devDependencies": {
     "@types/react": "^16.8.13",
     "@types/react-dom": "^16.8.4",
     "@types/react-router-dom": "^4.3.2",
+    "apollo": "^2.8.3",
     "parcel": "^1.12.3",
     "typescript": "^3.4.3"
   },
   "dependencies": {
     "@material-ui/core": "^3.9.3",
     "@material-ui/icons": "^3.0.2",
+    "apollo-boost": "^0.3.1",
+    "graphql": "^14.2.1",
+    "graphql-tag": "^2.10.1",
     "mobx": "^5.9.4",
     "react": "^16.8.6",
+    "react-apollo": "^2.5.5",
     "react-dom": "^16.8.6",
     "react-router": "^5.0.0",
     "react-router-dom": "^5.0.0",
