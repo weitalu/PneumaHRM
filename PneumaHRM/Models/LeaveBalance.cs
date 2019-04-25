@@ -13,7 +13,7 @@ namespace PneumaHRM.Models
         public string Description { get; set; }
         public DateTime ValidThru { get; set; }
         public string SnapShotData { get; set; }
-        public int? OwnerId { get; set; }
+        public string OwnerId { get; set; }
         public Employee Owner { get; set; }
     }
 
@@ -21,8 +21,10 @@ namespace PneumaHRM.Models
     {
         public LeaveBalanceType()
         {
+            Field<IdGraphType>("Id", resolve: ctx => ctx.Source.Id);
             Field(x => x.Description);
             Field(x => x.Value);
+            Field(x => x.SnapShotData, true);
         }
     }
 }

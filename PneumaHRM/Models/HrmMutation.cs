@@ -24,9 +24,8 @@ namespace PneumaHRM.Models
                     var hrmCtx = ctx.UserContext as HrmContext;
                     var db = hrmCtx.DbContext;
                     var userName = hrmCtx.UserContext.Identity.Name;
-                    var userId = db.Employees.Where(x => x.ADPrincipalName == userName).FirstOrDefault().Id;
                     var leaveRequest = ctx.GetArgument<LeaveRequest>("leaveRequest");
-                    leaveRequest.RequestIssuerId = userId;
+                    leaveRequest.RequestIssuerId = userName;
                     db.LeaveRequests.Add(leaveRequest);
                     return leaveRequest;
                 });
@@ -50,12 +49,13 @@ namespace PneumaHRM.Models
                     var balance = new LeaveBalance()
                     {
                         Value = -holidays.GetWorkHours(leaveRequst.Start.Value, leaveRequst.End.Value),
-                        OwnerId = leaveRequst.RequestIssuerId.Value,
+                        OwnerId = leaveRequst.RequestIssuerId,
                         Description = "The leave request balance",
                         SnapShotData = JsonConvert.SerializeObject(new
                         {
                             requestFrom = leaveRequst.Start,
                             requestTo = leaveRequst.End,
+                            type = leaveRequst.Type.ToString(),
                             approves = db.LeaveRequestApproves
                                         .Where(x => x.RequestId == targetId)
                                         .Select(x => x.ApproveBy)

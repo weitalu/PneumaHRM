@@ -1,4 +1,5 @@
-﻿using GraphQL.Types;
+﻿using GraphQL.EntityFramework;
+using GraphQL.Types;
 using GraphQL.Types.Relay;
 using GraphQL.Types.Relay.DataObjects;
 using System;
@@ -7,27 +8,37 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
+
 namespace PneumaHRM.Models
 {
-    public class HrmQuery : ObjectGraphType
+    public class HrmQuery : EfObjectGraphType
     {
-        public HrmQuery()
+        public HrmQuery(IEfGraphQLService efGraphQLService) : base(efGraphQLService)
         {
-            Field<ListGraphType<HolidayType>>(
+            AddQueryField(
                 "holidays",
-                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<DateTimeGraphType>> { Name = "from" },
-                    new QueryArgument<NonNullGraphType<DateTimeGraphType>> { Name = "to" }
-                ),
                 resolve: ctx =>
                 {
                     var hrmCtx = ctx.UserContext as HrmContext;
                     var db = hrmCtx.DbContext;
-                    var from = ctx.GetArgument<DateTime>("from").Date;
-                    var to = ctx.GetArgument<DateTime>("to").Date;
-                    return db.Holidays.Where(x => x.Value.Date >= from && x.Value.Date <= to).ToList();
+                    return db.Holidays;
                 });
-
+            AddQueryField(
+                "leaveRequests",
+                resolve: ctx =>
+                {
+                    var hrmCtx = ctx.UserContext as HrmContext;
+                    var db = hrmCtx.DbContext;
+                    return db.LeaveRequests;
+                });
+            AddNavigationConnectionField(
+                "leaveRequestsConnection",
+                resolve: ctx =>
+                {
+                    var hrmCtx = ctx.UserContext as HrmContext;
+                    var db = hrmCtx.DbContext;
+                    return db.LeaveRequests;
+                });
             Field<ListGraphType<EmployeeType>>(
                 "employees",
                 resolve: ctx =>

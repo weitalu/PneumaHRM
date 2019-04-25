@@ -1,4 +1,5 @@
-﻿using GraphQL.Types;
+﻿using GraphQL.DataLoader;
+using GraphQL.Types;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -19,7 +20,7 @@ namespace PneumaHRM.Models
         public LeaveRequestState State { get; set; }
         public LeaveType Type { get; set; }
 
-        public int? RequestIssuerId { get; set; }
+        public string RequestIssuerId { get; set; }
         public Employee RequestIssuer { get; set; }
 
         public List<LeaveRequestDeputy> Deputies { get; set; }
@@ -30,11 +31,12 @@ namespace PneumaHRM.Models
 
 
     }
-
+    public class LeaveTypeEnum : EnumerationGraphType<LeaveType> { }
     public enum LeaveType
     {
         Annual, OverTime, Sick, Personal, Other
     }
+    public class LeaveRequestStateEnum : EnumerationGraphType<LeaveRequestState> { }
     public enum LeaveRequestState
     {
         New, Balanced
@@ -62,10 +64,14 @@ namespace PneumaHRM.Models
     {
         public LeaveRequestType()
         {
+            Field<IdGraphType>("Id", resolve: ctx => ctx.Source.Id);
             Field<StringGraphType>("name", resolve: ctx => ctx.Source.Name);
+            Field<StringGraphType>("owner", resolve: ctx => ctx.Source.RequestIssuerId);
             Field<DateTimeGraphType>("from", resolve: ctx => ctx.Source.Start);
             Field<DateTimeGraphType>("to", resolve: ctx => ctx.Source.End);
             Field(x => x.Name);
+            Field<LeaveTypeEnum>("type", resolve: ctx => ctx.Source.Type);
+            Field<LeaveRequestStateEnum>("state", resolve: ctx => ctx.Source.State);
             Field<DecimalGraphType>("workHour",
                 resolve: ctx =>
                 {

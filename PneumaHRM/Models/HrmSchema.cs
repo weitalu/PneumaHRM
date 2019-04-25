@@ -9,9 +9,10 @@ namespace PneumaHRM.Models
 {
     public class HrmSchema : Schema
     {
-        public HrmSchema()
+        public HrmSchema(IDependencyResolver resolver) :
+        base(resolver)
         {
-            Query = new HrmQuery();
+            Query = resolver.Resolve<HrmQuery>();
             Mutation = new HrmMutation();
         }
     }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,21 @@ namespace PneumaHRM.Models
 {
     public class HrmDbContext : DbContext
     {
+        static HrmDbContext()
+        {
+            var builder = new DbContextOptionsBuilder();
+            builder.UseSqlServer("fake");
+            using (var context = new HrmDbContext(builder.Options))
+            {
+                DataModel = context.Model;
+            }
+        }
+
+        public static readonly IModel DataModel;
+
         private string createBy { get; }
+
+        private HrmDbContext(DbContextOptions options) : base(options) { }
         public HrmDbContext(IHttpContextAccessor httpContextAccessor)
         {
             createBy = httpContextAccessor?.HttpContext?.User?.Identity?.Name ?? "System";
@@ -51,6 +66,9 @@ namespace PneumaHRM.Models
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
+            modelBuilder.Entity<Employee>()
+                .HasKey(x => x.ADPrincipalName);
 
             modelBuilder.Entity<LeaveBalance>()
                 .HasOne(x => x.Owner)

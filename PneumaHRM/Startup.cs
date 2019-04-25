@@ -5,7 +5,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using GraphiQl;
 using GraphQL;
+using GraphQL.EntityFramework;
 using GraphQL.Types;
+using GraphQL.Types.Relay;
+using GraphQL.Utilities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -32,13 +35,23 @@ namespace PneumaHRM
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            GraphTypeTypeRegistry.Register<Holiday, HolidayType>();
+            GraphTypeTypeRegistry.Register<LeaveRequest, LeaveRequestType>();
+            GraphTypeTypeRegistry.Register<LeaveBalance, LeaveBalanceType>();
             services.AddHttpContextAccessor();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services
                 .AddEntityFrameworkSqlServer()
                 .AddDbContext<HrmDbContext>();
-            services.AddSingleton<IDocumentExecuter, DocumentExecuter>();
-            services.AddSingleton<ISchema>(new HrmSchema());
+            foreach (var type in GetGraphQlTypes())
+            {
+                services.AddSingleton(type);
+            }
+
+            EfGraphQLConventions.RegisterConnectionTypesInContainer(services);
+            EfGraphQLConventions.RegisterInContainer(services, HrmDbContext.DataModel);
+            services.AddSingleton<IDocumentExecuter, EfDocumentExecuter>();
+            services.AddSingleton<ISchema>(provider => new HrmSchema(new FuncDependencyResolver(provider.GetRequiredService)));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -86,6 +99,15 @@ namespace PneumaHRM
             });
             db.SeedData();
             ;
+        }
+
+
+        static IEnumerable<Type> GetGraphQlTypes()
+        {
+            return typeof(Startup).Assembly
+                .GetTypes()
+                .Where(x => !x.IsAbstract &&
+                            (typeof(IGraphType).IsAssignableFrom(x)));
         }
     }
 }
