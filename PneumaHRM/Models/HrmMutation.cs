@@ -27,6 +27,7 @@ namespace PneumaHRM.Models
                     var leaveRequest = ctx.GetArgument<LeaveRequest>("leaveRequest");
                     leaveRequest.RequestIssuerId = userName;
                     db.LeaveRequests.Add(leaveRequest);
+                    db.SaveChanges();
                     return leaveRequest;
                 });
 
@@ -53,6 +54,7 @@ namespace PneumaHRM.Models
                         Description = "The leave request balance",
                         SnapShotData = JsonConvert.SerializeObject(new
                         {
+                            requestId = leaveRequst.Id,
                             requestFrom = leaveRequst.Start,
                             requestTo = leaveRequst.End,
                             type = leaveRequst.Type.ToString(),

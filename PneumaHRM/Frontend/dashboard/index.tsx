@@ -11,25 +11,28 @@ import interactionPlugin from '@fullcalendar/interaction' // needed for dayClick
 
 
 export default () => <Query query={DASHBOARD_DATA_QUERY}>
- {({ data: { holidays }, loading }) => {
-      if (loading || !holidays) {
-        return <div>Loading ...</div>;
-      }
+  {({ data: { holidays, leaveRequests }, loading }) => {
+    if (loading || !holidays || !leaveRequests) {
+      return <div>Loading ...</div>;
+    }
 
-      return (
-        <DemoApp holidays={holidays.map(day=>({title: day.name , start:day.value , allday:true}))}/>
-      );
-    }}
+    return (
+      <DemoApp holidays={holidays.map(day => ({ title: day.name, start: day.value, allday: true }))}
+        leaves={leaveRequests.map(leave => ({ title: `${leave.type} ${leave.owner} workHour:${leave.workHour}`, start: leave.from, end: leave.to }))} />
+    );
+  }}
 </Query>
 
 import './main.scss'
+import leaverequest from '../leaverequest';
+import { SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION } from 'constants';
 
 interface DemoAppState {
   calendarWeekends: boolean
   calendarEvents: EventInput[]
 }
 
-class DemoApp extends React.Component<{holidays: EventInput[]}, DemoAppState> {
+class DemoApp extends React.Component<{ holidays: EventInput[], leaves: EventInput[] }, DemoAppState> {
 
   calendarComponentRef = React.createRef<FullCalendar>()
 
@@ -38,7 +41,7 @@ class DemoApp extends React.Component<{holidays: EventInput[]}, DemoAppState> {
 
     this.state = {
       calendarWeekends: true,
-      calendarEvents: [ ]
+      calendarEvents: []
     }
   }
 
@@ -53,12 +56,12 @@ class DemoApp extends React.Component<{holidays: EventInput[]}, DemoAppState> {
               center: 'title',
               right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
             }}
-            plugins={[ dayGridPlugin, timeGridPlugin, interactionPlugin ]}
-            ref={ this.calendarComponentRef }
-            weekends={ this.state.calendarWeekends }
-            events={ this.props.holidays }
-            dateClick={ (arg)=>this.handleDateClick(arg) }
-            />
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            ref={this.calendarComponentRef}
+            weekends={this.state.calendarWeekends}
+            events={this.props.holidays.concat(this.props.leaves)}
+            dateClick={(arg) => this.handleDateClick(arg)}
+          />
         </div>
       </div>
     )

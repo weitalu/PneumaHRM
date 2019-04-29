@@ -31,10 +31,17 @@ namespace PneumaHRM.Models
 
 
     }
-    public class LeaveTypeEnum : EnumerationGraphType<LeaveType> { }
+    public class LeaveTypeEnum : EnumerationGraphType<LeaveType>
+    {
+    }
     public enum LeaveType
     {
-        Annual, OverTime, Sick, Personal, Other
+        Annual,
+        OverTime,
+        Sick,
+        Personal,
+        Other,
+
     }
     public class LeaveRequestStateEnum : EnumerationGraphType<LeaveRequestState> { }
     public enum LeaveRequestState
@@ -57,7 +64,12 @@ namespace PneumaHRM.Models
             Field<DateTimeGraphType>()
                 .Name("end")
                 .Description("end time of the leave")
-                .Resolve(ctx => ctx.Source.End); 
+                .Resolve(ctx => ctx.Source.End);
+            Field<LeaveTypeEnum>()
+                .Name("type")
+                .Description("the type of the leave")
+                .Resolve(ctx => ctx.Source.Type)
+                .DefaultValue(LeaveType.Annual);
         }
     }
     public class LeaveRequestType : ObjectGraphType<LeaveRequest>

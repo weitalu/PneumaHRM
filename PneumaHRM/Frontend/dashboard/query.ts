@@ -11,6 +11,8 @@ export default gql`
     from
     to
     owner
+    type
+    workHour
   }
   leaveRequestsConnection {
     totalCount
