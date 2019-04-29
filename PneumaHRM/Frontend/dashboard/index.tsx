@@ -10,14 +10,14 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction' // needed for dayClick
 
 
-export default () => <Query query={DASHBOARD_DATA_QUERY} children>
+export default () => <Query query={DASHBOARD_DATA_QUERY}>
  {({ data: { holidays }, loading }) => {
       if (loading || !holidays) {
         return <div>Loading ...</div>;
       }
 
       return (
-        <DemoApp holidays={holidays.map(day=>({title: day.name , start:day.value}))}/>
+        <DemoApp holidays={holidays.map(day=>({title: day.name , start:day.value , allday:true}))}/>
       );
     }}
 </Query>
@@ -57,7 +57,6 @@ class DemoApp extends React.Component<{holidays: EventInput[]}, DemoAppState> {
             ref={ this.calendarComponentRef }
             weekends={ this.state.calendarWeekends }
             events={ this.props.holidays }
-            businessHours={this.props.holidays}
             dateClick={ (arg)=>this.handleDateClick(arg) }
             />
         </div>
@@ -66,6 +65,7 @@ class DemoApp extends React.Component<{holidays: EventInput[]}, DemoAppState> {
   }
 
   handleDateClick = (arg) => {
+    console.log(arg);
   }
 
 }

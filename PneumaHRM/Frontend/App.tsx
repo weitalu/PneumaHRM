@@ -22,6 +22,9 @@ import AccountBalance from '@material-ui/icons/AccountBalance'
 
 import { Link, Route } from 'react-router-dom'
 
+import { Query } from 'react-apollo';
+
+import APP_QUERY from './query'
 import Dashboard from './dashboard/index'
 import LeaveRequest from './leaverequest/index'
 const drawerWidth = 240;
@@ -57,8 +60,18 @@ const mainListItems = (
             </ListItem>)}
     </div>
 );
+export default () => <Query query={APP_QUERY}>
+{({ data: { self }, loading }) => {
+    if (loading || !self) {
+      return <div>Loading ...</div>;
+    }
 
-export default class App extends React.Component {
+    return (
+      <App myName={self.userName}/>
+    );
+  }}
+</Query>
+class App extends React.Component<{myName:string}> {
     render() {
         return <div>
             <CssBaseline />
@@ -80,7 +93,7 @@ export default class App extends React.Component {
                                 variant="h6"
                                 color="inherit"
                                 noWrap>
-                                {route.header()}
+                                {route.header()+" "+this.props.myName}
                             </Typography>}
                         />
                     ))}
