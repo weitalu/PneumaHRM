@@ -13,8 +13,11 @@ namespace PneumaHRM.Models
         public string Description { get; set; }
         public DateTime ValidThru { get; set; }
         public string SnapShotData { get; set; }
+
         public string OwnerId { get; set; }
         public Employee Owner { get; set; }
+
+        public List<RequestBalanceRelation> RequestRelations { get; set; } = new List<RequestBalanceRelation>();
     }
 
     public class LeaveBalanceType : ObjectGraphType<LeaveBalance>

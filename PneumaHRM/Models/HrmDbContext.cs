@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System;
@@ -37,6 +37,7 @@ namespace PneumaHRM.Models
         public DbSet<LeaveRequestApprove> LeaveRequestApproves { get; set; }
         public DbSet<LeaveRequestComment> LeaveRequestComments { get; set; }
         public DbSet<LeaveRequestDeputy> LeaveRequestDeputies { get; set; }
+        public DbSet<RequestBalanceRelation> RequestBalanceRelations { get; set; }
 
         public override int SaveChanges()
         {
@@ -102,6 +103,18 @@ namespace PneumaHRM.Models
                 .WithMany(x => x.Comments)
                 .HasForeignKey(x => x.RequestId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<RequestBalanceRelation>()
+                .HasOne(x => x.Balance)
+                .WithMany(x => x.RequestRelations)
+                .HasForeignKey(x => x.BalanceId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<RequestBalanceRelation>()
+                .HasOne(x => x.Request)
+                .WithMany(x => x.BalanceRelations)
+                .HasForeignKey(x => x.RequestId)
+                .OnDelete(DeleteBehavior.SetNull);
 
         }
     }

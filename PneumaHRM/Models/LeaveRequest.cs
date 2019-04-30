@@ -23,11 +23,13 @@ namespace PneumaHRM.Models
         public string RequestIssuerId { get; set; }
         public Employee RequestIssuer { get; set; }
 
-        public List<LeaveRequestDeputy> Deputies { get; set; }
+        public List<LeaveRequestDeputy> Deputies { get; set; } = new List<LeaveRequestDeputy>();
 
-        public List<LeaveRequestApprove> Approves { get; set; }
+        public List<LeaveRequestApprove> Approves { get; set; } = new List<LeaveRequestApprove>();
 
-        public List<LeaveRequestComment> Comments { get; set; }
+        public List<LeaveRequestComment> Comments { get; set; } = new List<LeaveRequestComment>();
+
+        public List<RequestBalanceRelation> BalanceRelations { get; set; } = new List<RequestBalanceRelation>();
 
 
     }

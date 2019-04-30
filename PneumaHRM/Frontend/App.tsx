@@ -20,7 +20,7 @@ import NoteAddIcon from '@material-ui/icons/NoteAdd';
 import AccountBalance from '@material-ui/icons/AccountBalance'
 //import {AppBar} from '@material-ui/core' all the package will be boundled 
 
-import { Link, Route } from 'react-router-dom'
+import { NavLink, Route } from 'react-router-dom'
 
 import { Query } from 'react-apollo';
 
@@ -31,7 +31,6 @@ const drawerWidth = 240;
 const routes = [
     {
         path: "/dashboard",
-        exact: true,
         header: () => "Dashboard",
         content: Dashboard,
         icon: DashboardIcon
@@ -49,29 +48,25 @@ const routes = [
         icon: NoteAddIcon
     }
 ];
-const mainListItems = (
-    <div>
-        {routes.map((route) =>
-            (<ListItem button component={Link} to={route.path}>
-                <ListItemIcon>
-                    <route.icon></route.icon>
-                </ListItemIcon>
-                <ListItemText primary={route.header()} />
-            </ListItem>)}
-    </div>
-);
+const toItem = route =>
+    <ListItem button component={NavLink} to={route.path}>
+        <ListItemIcon>
+            <route.icon></route.icon>
+        </ListItemIcon>
+        <ListItemText primary={route.header()} />
+    </ListItem>
 export default () => <Query query={APP_QUERY}>
-{({ data: { self }, loading }) => {
-    if (loading || !self) {
-      return <div>Loading ...</div>;
-    }
+    {({ data: { self }, loading }) => {
+        if (loading || !self) {
+            return <div>Loading ...</div>;
+        }
 
-    return (
-      <App myName={self.userName}/>
-    );
-  }}
+        return (
+            <App myName={self.userName} />
+        );
+    }}
 </Query>
-class App extends React.Component<{myName:string}> {
+class App extends React.Component<{ myName: string }> {
     render() {
         return <div>
             <CssBaseline />
@@ -87,13 +82,12 @@ class App extends React.Component<{myName:string}> {
                         <Route
                             key={index}
                             path={route.path}
-                            exact={route.exact}
                             render={() => <Typography
                                 component="h1"
                                 variant="h6"
                                 color="inherit"
                                 noWrap>
-                                {route.header()+" "+this.props.myName}
+                                {route.header() + ", Hello " + this.props.myName.split("\\")[1]}
                             </Typography>}
                         />
                     ))}
@@ -111,14 +105,17 @@ class App extends React.Component<{myName:string}> {
                     </IconButton>
                 </div>
                 <Divider />
-                <List>{mainListItems}</List>
+                <List>
+                    <div>
+                        {routes.map(toItem)}
+                    </div>
+                </List>
             </Drawer>
 
             <main style={{ marginLeft: `${drawerWidth}px`, marginTop: "100px" }}>
                 {routes.map((route, index) =>
                     (<Route
                         path={route.path}
-                        exact={route.exact}
                         component={route.content} />))}
             </main>
         </div>
