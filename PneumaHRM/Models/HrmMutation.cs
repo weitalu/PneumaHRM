@@ -30,11 +30,29 @@ namespace PneumaHRM.Models
                     db.SaveChanges();
                     return leaveRequest;
                 });
+            Field<StringGraphType>(
+                "deleteLeaveRequest",
+                arguments: new QueryArguments(
+                    new QueryArgument<NonNullGraphType<IdGraphType>>()
+                    {
+                        Name = "requestId"
+                    }),
+                resolve: ctx =>
+                {
+                    var hrmCtx = ctx.UserContext as HrmContext;
+                    var db = hrmCtx.DbContext;
+                    var requestId = ctx.GetArgument<int>("requestId");
+                    var request = db.LeaveRequests.Find(requestId);
+                    if (request.State != LeaveRequestState.New) throw new Exception($"{request.State.ToString()} can't not be deleted");
+                    db.LeaveRequests.Remove(request);
+                    db.SaveChanges();
+                    return "success";
+                });
 
             Field<LeaveBalanceType>(
-                "balanceTheLeave",
+                "balanceLeaveRequest",
                 arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<IntGraphType>>()
+                    new QueryArgument<NonNullGraphType<IdGraphType>>()
                     {
                         Name = "leaveRequestId",
                         Description = "The Id of the target leave request to be balanced"

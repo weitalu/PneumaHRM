@@ -6,6 +6,7 @@ export default gql`mutation CreateLeaveRequest($leaveRequest:LeaveRequestInput!)
         from 
         to 
         id 
+        owner
         type 
     }
 }

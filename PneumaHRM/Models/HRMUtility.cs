@@ -11,23 +11,19 @@ namespace PneumaHRM.Models
     {
         public static decimal GetWorkHours(this List<DateTime> holidays, DateTime start, DateTime end)
         {
-            var period = end - start;
-            var days = (int)Math.Floor(period.TotalMinutes / 1440);
-            var hours = Math.Min((decimal)((period.TotalMinutes % 1440) / 60), 8m);
-
-            var holidaycount = holidays
-                .Where(x => x <= end.Date && x >= start.Date)
-                .Select(x => x.Date)
-                .Distinct()
-                .Count();
-
-            return Math.Max(((days - holidaycount) * 8 + hours), 0);
+            decimal result = 0m;
+            for (var current = start; current < end; current = current.AddMinutes(30))
+            {
+                var isWorkHour = !holidays.Contains(current.Date) && current.Hour >= 9 && current.Hour < 18 && current.Hour != 12;
+                if (isWorkHour) result += 0.5m;
+            }
+            return result;
         }
         public static int ImportHoliday(this HrmDbContext db, List<HolidayDTO> data)
         {
             var holidays = db.Holidays.Select(x => x.Value.Date).ToList();
             var toImport = data.Where(x => x.IsHoliday == "是")
-                .Where(x => ! holidays.Contains(x.Date.Date))
+                .Where(x => !holidays.Contains(x.Date.Date))
                 .Select(x => new Holiday()
                 {
                     Name = x.Name,

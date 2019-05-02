@@ -22,7 +22,7 @@ namespace PneumaHRM.Models
         public EmployeeType(IEfGraphQLService graphQlService) :
             base(graphQlService)
         {
-            Field(x => x.ADPrincipalName).Name("UserName");
+            Field<StringGraphType>("userName", resolve: x => x.Source.ADPrincipalName.Split('\\')[1]);
             AddNavigationListField(
                 name: "balances",
                 resolve: context => context.Source.Balances);

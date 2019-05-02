@@ -6,6 +6,7 @@ import FullCalendar from '@fullcalendar/react'
 import { EventInput } from '@fullcalendar/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
+import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction' // needed for dayClick
 
 import './main.scss'
@@ -13,8 +14,13 @@ import './main.scss'
 interface InternalState {
     redirect?: Redirect
 }
+interface CalendarProps {
+    holidays: EventInput[],
+    leaves: RedirectEventInput[],
+    onDateSelected?: (start: Date, end: Date) => void
+}
 type RedirectEventInput = EventInput & { redirect: Redirect };
-export default class extends React.Component<{ holidays: EventInput[], leaves: RedirectEventInput[], onDateSelected?: (value: Date) => void }, InternalState> {
+export default class extends React.Component<CalendarProps, InternalState> {
 
     calendarComponentRef = React.createRef<FullCalendar>()
 
@@ -39,11 +45,12 @@ export default class extends React.Component<{ holidays: EventInput[], leaves: R
                             center: 'title',
                             right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
                         }}
-                        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin]}
                         ref={this.calendarComponentRef}
                         weekends={true}
                         events={this.props.holidays.concat(this.props.leaves)}
-                        dateClick={({ date }) => this.props.onDateSelected(date)}
+                        selectable
+                        select={(info) => this.props.onDateSelected(info.start, info.end)}
                         eventClick={({ event: { extendedProps: { redirect } } }) => redirect == null ? console.log("nothing") : this.setState({ redirect: redirect })}
                     />
                 </div>

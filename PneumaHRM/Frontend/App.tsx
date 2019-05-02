@@ -12,7 +12,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Toolbar from '@material-ui/core/Toolbar'
 import Typography from '@material-ui/core/Typography'
 
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import MenuIcon from '@material-ui/icons/Menu'
 import NotificationsIcon from '@material-ui/icons/Notifications'
 import DashboardIcon from '@material-ui/icons/Dashboard';
@@ -42,7 +41,7 @@ const routes = [
         icon: AccountBalance
     },
     {
-        path: "/leaverequest",
+        path: "/leaverequest/:id",
         header: () => "Leave Request",
         content: LeaveRequest,
         icon: NoteAddIcon
@@ -87,7 +86,7 @@ class App extends React.Component<{ myName: string }> {
                                 variant="h6"
                                 color="inherit"
                                 noWrap>
-                                {route.header() + ", Hello " + this.props.myName.split("\\")[1]}
+                                {route.header() + ", Hello " + this.props.myName}
                             </Typography>}
                         />
                     ))}
@@ -101,7 +100,6 @@ class App extends React.Component<{ myName: string }> {
             >
                 <div>
                     <IconButton>
-                        <ChevronLeftIcon />
                     </IconButton>
                 </div>
                 <Divider />

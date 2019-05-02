@@ -10,29 +10,37 @@ import { Query, Mutation } from 'react-apollo';
 
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
+import MenuItem from '@material-ui/core/MenuItem';
 import Paper from '@material-ui/core/Paper';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 
 import CalendarApp from './calendar'
+import { throwServerError } from 'apollo-link-http-common';
 
+const calenderStart = "2019-01-01"
+const leaveTypes = ["ANNUAL",
+  "OVER_TIME",
+  "SICK",
+  "PERSONAL",
+  "OTHER"]
 interface internalState {
-  inputFocusOn: "start" | "end" | "none"
   start: moment.Moment
   end: moment.Moment
+  leaveType: string
 }
 export default class extends React.Component<{}, internalState> {
   constructor(props) {
     super(props)
 
     this.state = {
-      inputFocusOn: "none",
-      start: moment("2019-01-01"),
-      end: moment("2019-01-05")
+      start: moment(),
+      end: moment(),
+      leaveType: leaveTypes[0]
     }
   }
   render() {
-    return <Query query={CALENDER_DATA_QUERY} variables={{ start: "2019-01-01" }}>
+    return <Query query={CALENDER_DATA_QUERY} variables={{ start: calenderStart }}>
       {({ data: { holidays, leaveRequests }, loading }) => {
         if (loading || !holidays || !leaveRequests) {
           return <div>Loading ...</div>;
@@ -45,18 +53,18 @@ export default class extends React.Component<{}, internalState> {
                 <CreateLeaveRequestApp
                   start={this.state.start.format()}
                   end={this.state.end.format()}
-                  focusOn={(value) => this.setState({ inputFocusOn: value })} />
+                  leaveType={this.state.leaveType}
+                  setLeaveType={(value) => this.setState({ leaveType: value })} />
               </Grid>
               <Grid item xs={6}>
                 <CalendarApp
                   holidays={holidays.map(holidayDataToInput)}
                   leaves={leaveRequests.map(leaveRequestToInput)}
-                  onDateSelected={v => {
-                    if (this.state.inputFocusOn === "start") {
-                      this.setState({ start: moment(v) });
-                    } else {
-                      this.setState({ end: moment(v) });
-                    }
+                  onDateSelected={(start, end) => {
+                    this.setState({
+                      start: moment(start),
+                      end: moment(end)
+                    });
                   }} />
               </Grid>
               <Grid item xs={3}>
@@ -71,56 +79,90 @@ export default class extends React.Component<{}, internalState> {
 
 
 
-const CreateLeaveRequestApp = ({ start, end, focusOn }) =>
+const CreateLeaveRequestApp = ({ start, end, leaveType, setLeaveType }) =>
   <Query query={WORKHOURS_DATA_QUERY} variables={{ from: start, to: end }}>
-    {leaveRequestAppView(start, end, focusOn)}
+    {leaveRequestAppView(start, end, leaveType, setLeaveType)}
   </Query>
-const leaveRequestAppView = (start, end, focusOn) => ({ data: { workHours }, loading }) => loading ? <></> : <Paper style={{ padding: "20px" }}>
+const leaveRequestAppView = (start, end, leaveType, setLeaveType) => ({ data: { workHours }, loading }) => <Paper style={{ padding: "20px" }}>
   <Typography variant="h5" component="h3">
     Create Leave Request
   </Typography>
   <TextField
-    label="Leave Request Start"
+    label="Start"
     margin="normal"
     fullWidth
     variant="filled"
     value={start}
-    style={{ margin: "8px" }}
-    autoFocus 
-    onFocus={() => focusOn("start")} />
+    style={{ margin: "8px" }} />
   <TextField
-    label="Leave Request End"
+    label="End"
     margin="normal"
     fullWidth
     variant="filled"
     value={end}
-    style={{ margin: "8px" }}
-    autoFocus 
-    onFocus={() => focusOn("end")} />
-  <TextField
-    id="filled-read-only-input"
-    label="Calculated Work Hours"
-    margin="normal"
-    value={workHours}
-    fullWidth
-    InputProps={{
-      disabled: true,
-    }}
-    variant="filled"
-    style={{ margin: "8px" }}
-  />
-  <Button variant="contained" color="primary">Create</Button>
+    style={{ margin: "8px" }} />
+  <Mutation refetchQueries={[{ query: CALENDER_DATA_QUERY, variables: { start: calenderStart } }]}
+    mutation={CREATE_LEAVEREQUEST_MUTATION}>
+    {(createLeaveRequest, { data }) => <>
+      <TextField
+        label="Type"
+        margin="normal"
+        fullWidth
+        select
+        variant="filled"
+        value={leaveType}
+        style={{ margin: "8px" }}
+        onChange={(e) => setLeaveType(e.target.value)}
+      >
+        {leaveTypes.map(option => (
+          <MenuItem key={option} value={option}>
+            {option}
+          </MenuItem>
+        ))}
+      </TextField>
+      <TextField
+        label="Description"
+        fullWidth
+        multiline
+        variant="filled"
+        style={{ margin: "8px" }}
+        onChange={e => console.log(e.target.value)}
+      />
+      <TextField
+        label="Calculated Hours"
+        margin="normal"
+        value={loading ? "loading" : workHours}
+        fullWidth
+        InputProps={{
+          disabled: true,
+        }}
+        variant="filled"
+        style={{ margin: "8px" }}
+      />
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => createLeaveRequest({
+          variables: {
+            leaveRequest: { name: "testing", start: start, end: end, type: leaveType }
+          }
+        })}>Create</Button>
+    </>}
+
+  </Mutation>
 </Paper>
 
 const holidayDataToInput = day => ({
   title: day.name,
   start: day.value,
-  allday: true
+  allday: true,
+  rendering: 'background'
+  color: '#ff9f89'
 })
 
 const leaveRequestToInput = leave => ({
-  title: `${leave.type} ${leave.owner} workHour:${leave.workHour}`,
+  title: `Taker: ${leave.owner}, Type: ${leave.type}`,
   start: leave.from,
   end: leave.to,
-  redirect: <Redirect push to={"/leaverequest/" + leave.id} />
+  redirect: leave.id != null ? <Redirect push to={"/leaverequest/" + leave.id} /> : null
 })
