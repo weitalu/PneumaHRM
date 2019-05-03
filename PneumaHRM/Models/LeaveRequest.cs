@@ -1,4 +1,5 @@
 ﻿using GraphQL.DataLoader;
+using GraphQL.EntityFramework;
 using GraphQL.Types;
 using System;
 using System.Collections.Generic;
@@ -48,7 +49,7 @@ namespace PneumaHRM.Models
     public class LeaveRequestStateEnum : EnumerationGraphType<LeaveRequestState> { }
     public enum LeaveRequestState
     {
-        New, Balanced
+        New, Balanced,Completed
     }
     public class LeaveRequestInputType : InputObjectGraphType<LeaveRequest>
     {
@@ -76,9 +77,9 @@ namespace PneumaHRM.Models
                 .Resolve(ctx => ctx.Source.Description);
         }
     }
-    public class LeaveRequestType : ObjectGraphType<LeaveRequest>
+    public class LeaveRequestType : EfObjectGraphType<LeaveRequest>
     {
-        public LeaveRequestType()
+        public LeaveRequestType(IEfGraphQLService efGraphQLService) : base(efGraphQLService)
         {
             Field<IdGraphType>("Id", resolve: ctx => ctx.Source.Id);
             Field<StringGraphType>("name", resolve: ctx => ctx.Source.Name);
@@ -103,6 +104,9 @@ namespace PneumaHRM.Models
                         return 0m;
                     }
                 });
+            AddNavigationListField(
+               name: "deputies",
+               resolve: context => context.Source.Deputies);
         }
     }
 }

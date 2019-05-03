@@ -24,10 +24,12 @@ namespace PneumaHRM.Models
     {
         public LeaveBalanceType()
         {
-            Field<IdGraphType>("Id", resolve: ctx => ctx.Source.Id);
+            Field<IdGraphType>("id", resolve: ctx => ctx.Source.Id);
             Field(x => x.Description);
             Field(x => x.Value);
             Field(x => x.SnapShotData, true);
+            Field<DateTimeGraphType>("createdOn", resolve: ctx => ctx.Source.CreatedOn);
+            Field<StringGraphType>("createdBy", resolve: ctx => ctx.Source.CreatedBy);
         }
     }
 }

@@ -2,6 +2,7 @@
 using GraphQL.Types;
 using GraphQL.Types.Relay;
 using GraphQL.Types.Relay.DataObjects;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +46,7 @@ namespace PneumaHRM.Models
                 {
                     var hrmCtx = ctx.UserContext as HrmContext;
                     var db = hrmCtx.DbContext;
-                    return db.Employees.ToList();
+                    return db.Employees.Include("Balances").ToList();
                 });
             Field<DecimalGraphType>(
                 "workHours",
@@ -71,7 +72,7 @@ namespace PneumaHRM.Models
                     var hrmCtx = ctx.UserContext as HrmContext;
                     var db = hrmCtx.DbContext;
                     var userName = hrmCtx.UserContext.Identity.Name;
-                    return db.Employees.Where(x => x.ADPrincipalName == userName).FirstOrDefault();
+                    return db.Employees.Where(x => x.ADPrincipalName == userName).Include("Balances").FirstOrDefault();
                 });
         }
     }

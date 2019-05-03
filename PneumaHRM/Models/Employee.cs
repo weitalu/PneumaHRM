@@ -44,6 +44,9 @@ namespace PneumaHRM.Models
               },
               description: "your current leave requests");
 
+            Field<DecimalGraphType>("currentBalance",
+                resolve: ctx => ctx.Source.Balances.Sum(x => x.Value));
+
         }
     }
 }

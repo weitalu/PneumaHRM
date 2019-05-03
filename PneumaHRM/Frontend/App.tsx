@@ -25,25 +25,29 @@ import { Query } from 'react-apollo';
 
 import APP_QUERY from './query'
 import Dashboard from './dashboard/index'
-import LeaveRequest from './leaverequest/index'
+import LeaveRequestList from './leaverequest/index'
+import LeaveRequestDetail from './leaverequest/detail'
 const drawerWidth = 240;
 const routes = [
     {
         path: "/dashboard",
+        exact: true,
         header: () => "Dashboard",
         content: Dashboard,
         icon: DashboardIcon
     },
     {
         path: "/balance",
+        exact: true,
         header: () => "Leave Balance",
         content: () => <></>,
         icon: AccountBalance
     },
     {
-        path: "/leaverequest/:id",
+        path: "/leaverequest",
+        exact: false,
         header: () => "Leave Request",
-        content: LeaveRequest,
+        content: LeaveRequestList,
         icon: NoteAddIcon
     }
 ];
@@ -114,6 +118,7 @@ class App extends React.Component<{ myName: string }> {
                 {routes.map((route, index) =>
                     (<Route
                         path={route.path}
+                        exact={route.exact}
                         component={route.content} />))}
             </main>
         </div>

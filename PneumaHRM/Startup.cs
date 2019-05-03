@@ -37,6 +37,7 @@ namespace PneumaHRM
         {
             GraphTypeTypeRegistry.Register<Holiday, HolidayType>();
             GraphTypeTypeRegistry.Register<LeaveRequest, LeaveRequestType>();
+            GraphTypeTypeRegistry.Register<LeaveRequestDeputy, LeaveRequestDeputyType>();
             GraphTypeTypeRegistry.Register<LeaveBalance, LeaveBalanceType>();
             services.AddHttpContextAccessor();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

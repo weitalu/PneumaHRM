@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GraphQL.Types;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,5 +15,12 @@ namespace PneumaHRM.Models
         public LeaveRequest Request { get; set; }
 
         public string DeputyBy { get; set; }
+    }
+    public class LeaveRequestDeputyType : ObjectGraphType<LeaveRequestDeputy>
+    {
+        public LeaveRequestDeputyType()
+        {
+            Field<StringGraphType>("by", resolve: x => x.Source.DeputyBy);
+        }
     }
 }

@@ -73,7 +73,7 @@ const holidayDataToInput = day => ({
 })
 
 const leaveRequestToInput = leave => ({
-  title: `Taker: ${leave.owner}, Type: ${leave.type}`,
+  title: `Leave Taker: ${leave.owner}, Type: ${leave.type}`,
   start: leave.from,
   end: leave.to,
   redirect: leave.id != null ? <Redirect push to={"/leaverequest/" + leave.id} /> : null
