@@ -57,21 +57,23 @@ namespace PneumaHRM.Models
             Name = "LeaveRequestInput";
             Description = "A leave request";
 
-            Field(x => x.Name, nullable: true)
-                .Description("The name of the human.");
-            Field<DateTimeGraphType>()
+            Field<NonNullGraphType<DateTimeGraphType>>()
                 .Name("start")
                 .Description("start time of the leave")
                 .Resolve(ctx => ctx.Source.Start);
-            Field<DateTimeGraphType>()
+            Field<NonNullGraphType<DateTimeGraphType>>()
                 .Name("end")
                 .Description("end time of the leave")
                 .Resolve(ctx => ctx.Source.End);
-            Field<LeaveTypeEnum>()
+            Field<NonNullGraphType<LeaveTypeEnum>>()
                 .Name("type")
                 .Description("the type of the leave")
                 .Resolve(ctx => ctx.Source.Type)
                 .DefaultValue(LeaveType.Annual);
+            Field<NonNullGraphType<StringGraphType>>()
+                .Name("description")
+                .Description("the description of the leave")
+                .Resolve(ctx => ctx.Source.Description);
         }
     }
     public class LeaveRequestType : ObjectGraphType<LeaveRequest>

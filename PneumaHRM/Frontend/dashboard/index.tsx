@@ -4,9 +4,7 @@ import { Redirect } from 'react-router-dom'
 import moment from 'moment';
 
 import CALENDER_DATA_QUERY from './getCalendarData'
-import WORKHOURS_DATA_QUERY from './getWorkHours'
-import CREATE_LEAVEREQUEST_MUTATION from './createLeaveRequest'
-import { Query, Mutation } from 'react-apollo';
+import { Query } from 'react-apollo';
 
 import Grid from '@material-ui/core/Grid';
 import CalendarApp from './calendar'
@@ -16,7 +14,6 @@ const calenderStart = "2019-01-01"
 interface internalState {
   start: moment.Moment
   end: moment.Moment
-  leaveType: string
 }
 export default class extends React.Component<{}, internalState> {
   constructor(props) {
@@ -24,8 +21,7 @@ export default class extends React.Component<{}, internalState> {
 
     this.state = {
       start: moment(),
-      end: moment(),
-      leaveType: "ANNUAL"
+      end: moment()
     }
   }
   render() {
@@ -41,9 +37,7 @@ export default class extends React.Component<{}, internalState> {
               <Grid item xs={3}>
                 <CreateLeaveRequestApp
                   start={this.state.start.format()}
-                  end={this.state.end.format()}
-                  leaveType={this.state.leaveType}
-                  setLeaveType={(value) => this.setState({ leaveType: value })} />
+                  end={this.state.end.format()} />
               </Grid>
               <Grid item xs={6}>
                 <CalendarApp
