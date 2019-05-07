@@ -22,7 +22,8 @@ const detailView = (deleteLeaveRequest, { data, called }) => {
     return <Button
         variant="contained"
         color="primary"
-        onClick={() => deleteLeaveRequest({ refetchQueries: ["GetCalendarData"])}>
+        onClick={() => deleteLeaveRequest({ refetchQueries: ["GetCalendarData"] })}>
         Delete
 </Button>
 }
+

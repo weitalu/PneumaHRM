@@ -97,7 +97,7 @@ const leaveRequestAppView = (start, end, leaveType, setLeaveType) => ({ data: { 
             variant="filled"
             style={{ margin: "8px" }}
         />
-        <Mutation refetchQueries={[{ query: CALENDER_DATA_QUERY, variables: { start: "2019-01-01" } }]}
+        <Mutation refetchQueries={["GetCalendarData", "GetPagedLeaveRequests"]}
             mutation={CREATE_LEAVEREQUEST_MUTATION}>
             {(createLeaveRequest, { data, error, called }) => <>
                 <Button

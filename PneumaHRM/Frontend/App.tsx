@@ -25,8 +25,8 @@ import { Query } from 'react-apollo';
 
 import APP_QUERY from './query'
 import Dashboard from './dashboard/index'
-import LeaveRequestList from './leaverequest/index'
-import LeaveRequestDetail from './leaverequest/detail'
+import LeaveRequest from './leaverequest/index'
+import LeaveBalance from './leavebalance/index'
 const drawerWidth = 240;
 const routes = [
     {
@@ -38,16 +38,14 @@ const routes = [
     },
     {
         path: "/balance",
-        exact: true,
         header: () => "Leave Balance",
-        content: () => <></>,
+        content: LeaveBalance,
         icon: AccountBalance
     },
     {
         path: "/leaverequest",
-        exact: false,
         header: () => "Leave Request",
-        content: LeaveRequestList,
+        content: LeaveRequest,
         icon: NoteAddIcon
     }
 ];

@@ -30,6 +30,7 @@ namespace PneumaHRM.Models
             Field(x => x.SnapShotData, true);
             Field<DateTimeGraphType>("createdOn", resolve: ctx => ctx.Source.CreatedOn);
             Field<StringGraphType>("createdBy", resolve: ctx => ctx.Source.CreatedBy);
+            Field<StringGraphType>("owner", resolve: ctx => ctx.Source.OwnerId);
         }
     }
 }

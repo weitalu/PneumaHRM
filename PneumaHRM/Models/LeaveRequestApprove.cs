@@ -18,5 +18,9 @@ namespace PneumaHRM.Models
 
     public class LeaveRequestApproveType : ObjectGraphType<LeaveRequestApprove>
     {
+        public LeaveRequestApproveType()
+        {
+            Field<StringGraphType>("by", resolve: x => x.Source.ApproveBy);
+        }
     }
 }

@@ -25,12 +25,28 @@ namespace PneumaHRM.Models
                     return db.Holidays;
                 });
             AddQueryField(
+                "leaveBalances",
+                resolve: ctx =>
+                {
+                    var hrmCtx = ctx.UserContext as HrmContext;
+                    var db = hrmCtx.DbContext;
+                    return db.LeaveBalances.Include("RequestRelations");
+                });
+            AddQueryConnectionField(
+                "leaveBalancesConnection",
+                resolve: ctx =>
+                {
+                    var hrmCtx = ctx.UserContext as HrmContext;
+                    var db = hrmCtx.DbContext;
+                    return db.LeaveBalances.Include("RequestRelations");
+                });
+            AddQueryField(
                 "leaveRequests",
                 resolve: ctx =>
                 {
                     var hrmCtx = ctx.UserContext as HrmContext;
                     var db = hrmCtx.DbContext;
-                    return db.LeaveRequests;
+                    return db.LeaveRequests.Include("Deputies").Include("Approves");
                 });
             AddQueryConnectionField(
                 "leaveRequestsConnection",

@@ -49,7 +49,7 @@ namespace PneumaHRM.Models
     public class LeaveRequestStateEnum : EnumerationGraphType<LeaveRequestState> { }
     public enum LeaveRequestState
     {
-        New, Balanced,Completed
+        New, Balanced, Completed
     }
     public class LeaveRequestInputType : InputObjectGraphType<LeaveRequest>
     {
@@ -107,6 +107,9 @@ namespace PneumaHRM.Models
             AddNavigationListField(
                name: "deputies",
                resolve: context => context.Source.Deputies);
+            AddNavigationListField(
+               name: "approves",
+               resolve: context => context.Source.Approves);
         }
     }
 }

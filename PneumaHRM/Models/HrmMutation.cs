@@ -175,7 +175,11 @@ namespace PneumaHRM.Models
                     var targetId = ctx.GetArgument<int>("leaveRequestId");
                     var target = db.LeaveRequests.Find(targetId);
                     if (target == null) return "target request not exists";
-                    var deput = db.LeaveRequestDeputies.Where(x => x.RequestId == targetId && x.DeputyBy == userName).FirstOrDefault();
+                    if (target.RequestIssuerId == userName) throw new GraphQL.ExecutionError("you can't deputy yourself");
+                    var deput = db.LeaveRequestDeputies
+                        .Where(x => x.RequestId == targetId)
+                        .Where(x=>x.DeputyBy == userName)
+                        .FirstOrDefault();
                     if (deput == null)
                     {
                         db.LeaveRequestDeputies.Add(new LeaveRequestDeputy()
