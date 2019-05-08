@@ -83,11 +83,18 @@ namespace PneumaHRM.Models
         {
             Field<IdGraphType>("Id", resolve: ctx => ctx.Source.Id);
             Field<StringGraphType>("name", resolve: ctx => ctx.Source.Name);
+            Field<DateTimeGraphType>("createdOn", resolve: ctx => ctx.Source.CreatedOn);
             Field<StringGraphType>("owner", resolve: ctx => ctx.Source.RequestIssuerId.Split('\\')[1]);
             Field<DateTimeGraphType>("from", resolve: ctx => ctx.Source.Start);
             Field<DateTimeGraphType>("to", resolve: ctx => ctx.Source.End);
             Field<LeaveTypeEnum>("type", resolve: ctx => ctx.Source.Type);
             Field<LeaveRequestStateEnum>("state", resolve: ctx => ctx.Source.State);
+            Field<BooleanGraphType>("isApprovedByMe", resolve: ctx =>
+            {
+                var hrmCtx = ctx.UserContext as HrmContext;
+                return ctx.Source.Approves.Select(x => x.ApproveBy).Contains(hrmCtx.UserContext.Identity.Name);
+            });
+            Field<BooleanGraphType>("canDelete", resolve: ctx => ctx.Source.CanDelete());
             Field<DecimalGraphType>("workHour",
                 resolve: ctx =>
                 {

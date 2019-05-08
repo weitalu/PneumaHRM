@@ -36,8 +36,8 @@ export default class extends React.Component<{}, internalState> {
             <Grid container spacing={24}>
               <Grid item xs={3}>
                 <CreateLeaveRequestApp
-                  start={this.state.start.format()}
-                  end={this.state.end.format()} />
+                  start={this.state.start}
+                  end={this.state.end} />
               </Grid>
               <Grid item xs={6}>
                 <CalendarApp

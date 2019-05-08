@@ -44,7 +44,7 @@ namespace PneumaHRM.Models
                     var db = hrmCtx.DbContext;
                     var requestId = ctx.GetArgument<int>("requestId");
                     var request = db.LeaveRequests.Find(requestId);
-                    if (request.State != LeaveRequestState.New) throw new Exception($"{request.State.ToString()} can't not be deleted");
+                    if (! request.CanDelete()) throw new Exception($"{request.State.ToString()} can't not be deleted");
                     db.LeaveRequests.Remove(request);
                     db.SaveChanges();
                     return "success";
@@ -161,7 +161,7 @@ namespace PneumaHRM.Models
                 });
 
             Field<StringGraphType>(
-                "toggleDeputLeaveRequest",
+                "deputyLeaveRequest",
                 arguments: new QueryArguments(
                     new QueryArgument<NonNullGraphType<IntGraphType>>()
                     {
@@ -187,10 +187,6 @@ namespace PneumaHRM.Models
                             DeputyBy = userName,
                             RequestId = targetId,
                         });
-                    }
-                    else
-                    {
-                        db.LeaveRequestDeputies.Remove(deput);
                     }
                     return "success";
                 });

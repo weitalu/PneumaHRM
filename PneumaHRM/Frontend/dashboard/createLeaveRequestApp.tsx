@@ -1,5 +1,7 @@
 import React from 'react';
 
+import moment from 'moment';
+
 import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
 import Paper from '@material-ui/core/Paper';
@@ -18,7 +20,7 @@ const leaveTypes =
         "PERSONAL",
         "OTHER"]
 
-export default class extends React.Component<{ start: string, end: string }, { leaveType: string }> {
+export default class extends React.Component<{ start: moment.Moment, end: moment.Moment }, { leaveType: string }> {
     constructor(props) {
         super(props)
 
@@ -28,7 +30,7 @@ export default class extends React.Component<{ start: string, end: string }, { l
     }
     render() {
         let { start, end } = this.props;
-        return <Query query={WORKHOURS_DATA_QUERY} variables={{ from: start, to: end }}>
+        return <Query query={WORKHOURS_DATA_QUERY} variables={{ from: start.format(), to: end.format() }}>
             {leaveRequestAppView(
                 start,
                 end,
@@ -50,14 +52,14 @@ const leaveRequestAppView = (start, end, leaveType, setLeaveType) => ({ data: { 
             margin="normal"
             fullWidth
             variant="filled"
-            value={start}
+            value={start.format('lll')}
             style={{ margin: "8px" }} />
         <TextField
             label="End"
             margin="normal"
             fullWidth
             variant="filled"
-            value={end}
+            value={end.format('lll')}
             style={{ margin: "8px" }} />
         <TextField
             label="Type"
@@ -105,7 +107,7 @@ const leaveRequestAppView = (start, end, leaveType, setLeaveType) => ({ data: { 
                     color="primary"
                     onClick={() => workHours > 0 ? createLeaveRequest({
                         variables: {
-                            leaveRequest: { start: start, end: end, type: leaveType, description: description }
+                            leaveRequest: { start: start.format(), end: end.format(), type: leaveType, description: description }
                         }
                     }) : ""}>Create</Button>
             </>}
