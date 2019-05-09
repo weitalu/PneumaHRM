@@ -9,7 +9,7 @@ namespace PneumaHRM.Models
 {
     public static class HRMUtility
     {
-        public static (bool, string) CanDeputy(this LeaveRequest target, string deputy)
+        public static (bool, string) CanDeputyBy(this LeaveRequest target, string deputy)
         {
             if (target==null) return (false, "target not exist");
             if (target.RequestIssuerId == deputy) return (false, "can't deputy yourself");

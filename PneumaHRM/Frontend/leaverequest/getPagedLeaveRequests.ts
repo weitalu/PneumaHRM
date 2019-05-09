@@ -15,6 +15,7 @@ query GetPagedLeaveRequests($search: [WhereExpressionGraph], $skip: Int, $take: 
     canDelete
     createdOn
     workHour
+    canDeputyBy
   }
 }
 `

@@ -11,30 +11,16 @@ import interactionPlugin from '@fullcalendar/interaction' // needed for dayClick
 
 import './main.scss'
 
-interface InternalState {
-    redirect?: Redirect
-}
 interface CalendarProps {
     holidays: EventInput[],
     leaves: RedirectEventInput[],
     onDateSelected?: (start: Date, end: Date) => void
 }
 type RedirectEventInput = EventInput & { redirect: Redirect };
-export default class extends React.Component<CalendarProps, InternalState> {
+export default class extends React.Component<CalendarProps> {
 
     calendarComponentRef = React.createRef<FullCalendar>()
-
-    constructor(props) {
-        super(props)
-
-        this.state = {
-        }
-    }
-
     render() {
-        if (this.state.redirect) {
-            return this.state.redirect;
-        }
         return (
             <div className='demo-app'>
                 <div className='demo-app-calendar'>
@@ -51,7 +37,7 @@ export default class extends React.Component<CalendarProps, InternalState> {
                         events={this.props.holidays.concat(this.props.leaves)}
                         selectable
                         select={(info) => this.props.onDateSelected(info.start, info.end)}
-                        eventClick={({ event: { extendedProps: { redirect } } }) => redirect == null ? console.log("nothing") : this.setState({ redirect: redirect })}
+                        eventClick={({ event: { extendedProps: { handleClick } } }) => handleClick != null ? handleClick() : console.log("no handle")}
                     />
                 </div>
             </div>

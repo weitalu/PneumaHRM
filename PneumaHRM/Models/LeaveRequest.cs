@@ -95,6 +95,11 @@ namespace PneumaHRM.Models
                 return ctx.Source.Approves.Select(x => x.ApproveBy).Contains(hrmCtx.UserContext.Identity.Name);
             });
             Field<BooleanGraphType>("canDelete", resolve: ctx => ctx.Source.CanDelete());
+            Field<BooleanGraphType>("canDeputyBy", resolve: ctx =>
+            {
+                var username = (ctx.UserContext as HrmContext).UserContext.Identity.Name;
+                return ctx.Source.CanDeputyBy(username).Item1;
+            });
             Field<DecimalGraphType>("workHour",
                 resolve: ctx =>
                 {

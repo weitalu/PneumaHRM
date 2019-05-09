@@ -1,21 +1,22 @@
 import React from 'react';
 
-import { Redirect } from 'react-router-dom'
+import { Route } from 'react-router-dom'
 import moment from 'moment';
 
 import CALENDER_DATA_QUERY from './getCalendarData'
 import { Query } from 'react-apollo';
 
 import Grid from '@material-ui/core/Grid';
-import CalendarApp from './calendar'
-import CreateLeaveRequestApp from './createLeaveRequestApp'
+import CalendarApp from './calendarComp'
+import CreateLeaveRequestApp from './createLeaveRequestComp'
+import createRedirect from '../util/createRedirect';
 
 const calenderStart = "2019-01-01"
 interface internalState {
   start: moment.Moment
   end: moment.Moment
 }
-export default class extends React.Component<{}, internalState> {
+export default class extends React.Component<any, internalState> {
   constructor(props) {
     super(props)
 
@@ -25,6 +26,7 @@ export default class extends React.Component<{}, internalState> {
     }
   }
   render() {
+    console.log(this.props.history)
     return <Query query={CALENDER_DATA_QUERY} variables={{ start: calenderStart }}>
       {({ data: { holidays, leaveRequests }, loading }) => {
         if (loading || !holidays || !leaveRequests) {
@@ -42,7 +44,7 @@ export default class extends React.Component<{}, internalState> {
               <Grid item xs={6}>
                 <CalendarApp
                   holidays={holidays.map(holidayDataToInput)}
-                  leaves={leaveRequests.map(leaveRequestToInput)}
+                  leaves={leaveRequests.map(leaveRequestToInput(this.props.history))}
                   onDateSelected={(start, end) => {
                     this.setState({
                       start: moment(start),
@@ -72,12 +74,12 @@ const holidayDataToInput = day => ({
   color: '#ff9f89'
 })
 
-const leaveRequestToInput = leave => ({
+const leaveRequestToInput = (history) => (leave) => ({
   title: `${leave.owner}, ${leave.type}`,
   start: leave.from,
   end: leave.to,
-  redirect: <Redirect push to={{
-    pathname: "/leaverequest",
-    search: "?id=" + leave.id
-  }} />
+  handleClick: () => history.push({
+    pathname: '/leaverequest',
+    state: { id: leave.id }
+  })
 })
