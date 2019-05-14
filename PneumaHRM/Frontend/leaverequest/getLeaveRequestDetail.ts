@@ -15,6 +15,12 @@ query GetLeaveRequestDetail($id: String!) {
     description
     workHour
     canDeputyBy
+    comments {
+      content
+      createdBy
+      createdOn
+      type
+    }
   }
 }
 `

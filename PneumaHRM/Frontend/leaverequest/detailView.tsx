@@ -2,6 +2,9 @@ import React from 'react';
 
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
@@ -47,25 +50,18 @@ const ApproveAction = () => (approve) => <Button
     color="primary"
     onClick={() => approve()}>Approve</Button>
 
-const Form = (props) =>
-    <>
+const CompleteAction = () => <Button
+    variant="contained"
+    size="small"
+    style={{ marginLeft: "1px" }}
+    color="primary">Complete</Button>
+const Form = (props) => {
+    let commentInput;
+    return <>
         <Typography variant="h6" gutterBottom>
             {props.data.owner}'s  Leave Request {props.data.id}
         </Typography>
         <Grid container spacing={24}>
-            <Grid item xs={12}>
-                <Mutation
-                    mutation={APPROVE_LEAVE_REQUEST}
-                    refetchQueries={["GetPagedLeaveRequests"]}
-                    variables={{ id: props.data.id }}
-                    children={ApproveAction()} />
-                <Mutation
-                    mutation={DEPUTY_LEAVE_REQUEST}
-                    refetchQueries={["GetPagedLeaveRequests"]}
-                    variables={{ id: props.data.id }}
-                    children={DeputyAction(props.data.canDeputyBy)}
-                />
-            </Grid>
             <Grid item xs={12} sm={6}>
                 <TextField
                     label="Start"
@@ -101,13 +97,51 @@ const Form = (props) =>
                     value={props.data.description}
                 />
             </Grid>
+        </Grid>
+        <Typography variant="h6" gutterBottom>
+            History / Comment
+        </Typography>
+        <Grid container spacing={24}>
             <Grid item xs={12}>
-                <FormControlLabel
-                    control={<Checkbox color="secondary" name="saveAddress" value="yes" />}
-                    label="Use this address for payment details"
+                <List>
+                    {props.data.comments.map(toListItem)}
+                </List>
+                <TextField
+                    label="Comment"
+                    fullWidth
+                    innerRef={node => commentInput = node}
                 />
+                <Mutation
+                    mutation={APPROVE_LEAVE_REQUEST}
+                    refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
+                    variables={{ id: props.data.id, comment: "commentInput.value" }}
+                    children={ApproveAction()} />
+                <Mutation
+                    mutation={DEPUTY_LEAVE_REQUEST}
+                    refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
+                    variables={{ id: props.data.id, comment: "commentInput.value" }}
+                    children={DeputyAction(props.data.canDeputyBy)}
+                />
+                <CompleteAction />
             </Grid>
         </Grid>
+
     </>
+}
+
+const toListItem = (row, index) => <ListItem alignItems="flex-start">
+    <ListItemText
+        key={index}
+        primary={row.type}
+        secondary={
+            <>
+                <Typography component="span" color="textPrimary" >
+                    {row.createdBy}
+                </Typography>
+                {row.content ? row.content : "No Comment input"}
+            </>
+        }
+    />
+</ListItem>
 
 

@@ -83,7 +83,6 @@ const leaveRequestToTableRow = (toDetail) => (row, index) => (
                 refetchQueries={["GetCalendarData", "GetPagedLeaveRequests"]}>
                 {deleteAction(row.canDelete)}
             </Mutation>
-            <CompleteAction />
         </TableCell>
     </TableRow >
 )
@@ -95,12 +94,7 @@ const deleteAction = (canDelete) => (deleteLeaveRequest) => <Button
     disabled={!canDelete}
     style={{ marginLeft: "1px" }}
     onClick={() => deleteLeaveRequest()}>Delete</Button>
-
-const CompleteAction = () => <Button
-    variant="contained"
-    size="small"
-    style={{ marginLeft: "1px" }}
-    color="primary">Complete</Button>
+    
 const ViewAction = () => <Button
     variant="contained"
     size="small"
