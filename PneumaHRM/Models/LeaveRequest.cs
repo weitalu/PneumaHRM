@@ -49,7 +49,7 @@ namespace PneumaHRM.Models
     public class LeaveRequestStateEnum : EnumerationGraphType<LeaveRequestState> { }
     public enum LeaveRequestState
     {
-        New, Balanced, Completed
+        New, Approved, Balanced, Completed
     }
     public class LeaveRequestInputType : InputObjectGraphType<LeaveRequest>
     {
@@ -89,6 +89,7 @@ namespace PneumaHRM.Models
             Field<DateTimeGraphType>("to", resolve: ctx => ctx.Source.End);
             Field<LeaveTypeEnum>("type", resolve: ctx => ctx.Source.Type);
             Field<LeaveRequestStateEnum>("state", resolve: ctx => ctx.Source.State);
+            Field<StringGraphType>("description", resolve: ctx => ctx.Source.Description);
             Field<BooleanGraphType>("isApprovedByMe", resolve: ctx =>
             {
                 var hrmCtx = ctx.UserContext as HrmContext;

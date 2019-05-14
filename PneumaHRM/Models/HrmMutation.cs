@@ -44,7 +44,7 @@ namespace PneumaHRM.Models
                     var db = hrmCtx.DbContext;
                     var requestId = ctx.GetArgument<int>("requestId");
                     var request = db.LeaveRequests.Find(requestId);
-                    if (! request.CanDelete()) throw new Exception($"{request.State.ToString()} can't not be deleted");
+                    if (!request.CanDelete()) throw new Exception($"{request.State.ToString()} can't not be deleted");
                     db.LeaveRequests.Remove(request);
                     db.SaveChanges();
                     return "success";
@@ -148,7 +148,7 @@ namespace PneumaHRM.Models
                     var userName = (ctx.UserContext as HrmContext).UserContext.Identity.Name;
                     var targetId = ctx.GetArgument<int>("leaveRequestId");
                     var target = db.LeaveRequests.Find(targetId);
-                    if (target == null) return "target request not exists";
+                    if (target == null) return null;
                     if (db.LeaveRequestApproves.Where(x => x.RequestId == targetId && x.ApproveBy == userName).Count() == 0)
                     {
                         db.LeaveRequestApproves.Add(new LeaveRequestApprove()
@@ -156,6 +156,7 @@ namespace PneumaHRM.Models
                             ApproveBy = userName,
                             RequestId = targetId,
                         });
+                        target.State = LeaveRequestState.Approved;
                     }
                     return "success";
                 });
@@ -175,10 +176,11 @@ namespace PneumaHRM.Models
                     var targetId = ctx.GetArgument<int>("leaveRequestId");
                     var target = db.LeaveRequests.Find(targetId);
                     if (target == null) return "target request not exists";
-                    if (target.RequestIssuerId == userName) throw new GraphQL.ExecutionError("you can't deputy yourself");
+                    var canDeput = target.CanDeputyBy(userName);
+                    if (!canDeput.Item1) throw new GraphQL.ExecutionError(canDeput.Item2);
                     var deput = db.LeaveRequestDeputies
                         .Where(x => x.RequestId == targetId)
-                        .Where(x=>x.DeputyBy == userName)
+                        .Where(x => x.DeputyBy == userName)
                         .FirstOrDefault();
                     if (deput == null)
                     {

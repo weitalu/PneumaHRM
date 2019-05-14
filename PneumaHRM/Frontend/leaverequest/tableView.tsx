@@ -16,7 +16,6 @@ import { Query, Mutation } from 'react-apollo';
 import GET_LEAVE_REQUESTS_QUERY from './getPagedLeaveRequests';
 import DELETE_LEAVE_REQUEST from './deleteLeaveRequest';
 import ROWS_PER_PAGE_OPTIONS from '../rowsPerPageOptions';
-import createRedirect from '../util/createRedirect';
 
 export default (pageNum = 0, pageSize = ROWS_PER_PAGE_OPTIONS[0], setPageNum, setPageSize, toDetail) => <Paper>
     <Table>
@@ -64,7 +63,7 @@ const leaveRequestToTableRow = (toDetail) => (row, index) => (
             {moment(row.createdOn).fromNow()}
         </TableCell>
         <TableCell onClick={(e) => toDetail(row.id)}>
-            {row.id}
+            <Button variant="contained" size="small">  {row.id}</Button>
         </TableCell>
         <TableCell>
             {row.owner}
@@ -81,8 +80,6 @@ const leaveRequestToTableRow = (toDetail) => (row, index) => (
                 refetchQueries={["GetCalendarData", "GetPagedLeaveRequests"]}>
                 {deleteAction(row.canDelete)}
             </Mutation>
-            {DeputyAction(row.canDeputyBy)()}
-            <ApproveAction />
             <CompleteAction />
         </TableCell>
     </TableRow >
@@ -95,20 +92,6 @@ const deleteAction = (canDelete) => (deleteLeaveRequest) => <Button
     disabled={!canDelete}
     style={{ marginLeft: "1px" }}
     onClick={() => deleteLeaveRequest()}>Delete</Button>
-
-const DeputyAction = (canDeputyBy) => (deputyLeaveRequest) => <Button
-    variant="contained"
-    size="small"
-    disabled={!canDeputyBy}
-    style={{ marginLeft: "1px" }}
-    color="primary"
-    onClick={() => deputyLeaveRequest()}>Deputy</Button>
-
-const ApproveAction = () => <Button
-    variant="contained"
-    size="small"
-    style={{ marginLeft: "1px" }}
-    color="primary">Approve</Button>
 
 const CompleteAction = () => <Button
     variant="contained"

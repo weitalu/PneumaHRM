@@ -80,6 +80,6 @@ const leaveRequestToInput = (history) => (leave) => ({
   end: leave.to,
   handleClick: () => history.push({
     pathname: '/leaverequest',
-    state: { id: leave.id }
+    search: 'id=' + leave.id
   })
 })

@@ -13,8 +13,12 @@ query GetLeaveRequestDetail($id: String!) {
     from
     to
     type
+    owner
     canDelete
     createdOn
+    description
+    workHour
+    canDeputyBy
   }
 }
 `

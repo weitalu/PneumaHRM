@@ -11,14 +11,14 @@ namespace PneumaHRM.Models
     {
         public static (bool, string) CanDeputyBy(this LeaveRequest target, string deputy)
         {
-            if (target==null) return (false, "target not exist");
-            if (target.RequestIssuerId == deputy) return (false, "can't deputy yourself");
+            if (target == null) return (false, "target not exist");
+            // if (target.RequestIssuerId == deputy) return (false, "can't deputy yourself");
             if (target.Deputies.Select(x => x.DeputyBy).Contains(deputy)) return (false, "already deputy");
             return (true, "");
         }
         public static bool CanDelete(this LeaveRequest target)
         {
-            return target != null && target.State == LeaveRequestState.New;
+            return target != null && (target.State == LeaveRequestState.New || target.State == LeaveRequestState.Approved);
         }
         public static decimal GetWorkHours(this List<DateTime> holidays, DateTime start, DateTime end)
         {
