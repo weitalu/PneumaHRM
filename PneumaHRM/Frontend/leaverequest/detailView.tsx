@@ -56,10 +56,12 @@ const Form = (props) =>
             <Grid item xs={12}>
                 <Mutation
                     mutation={APPROVE_LEAVE_REQUEST}
+                    refetchQueries={["GetPagedLeaveRequests"]}
                     variables={{ id: props.data.id }}
                     children={ApproveAction()} />
                 <Mutation
                     mutation={DEPUTY_LEAVE_REQUEST}
+                    refetchQueries={["GetPagedLeaveRequests"]}
                     variables={{ id: props.data.id }}
                     children={DeputyAction(props.data.canDeputyBy)}
                 />

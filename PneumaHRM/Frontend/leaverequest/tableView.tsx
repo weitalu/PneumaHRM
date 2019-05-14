@@ -8,6 +8,7 @@ import TableFooter from '@material-ui/core/TableFooter';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+import Tooltip from '@material-ui/core/Tooltip';
 import Paper from '@material-ui/core/Paper';
 
 import moment from 'moment';
@@ -59,9 +60,11 @@ export default (pageNum = 0, pageSize = ROWS_PER_PAGE_OPTIONS[0], setPageNum, se
 </Paper>
 const leaveRequestToTableRow = (toDetail) => (row, index) => (
     <TableRow key={index}>
-        <TableCell onClick={(e) => toDetail(row.id)}>
-            {moment(row.createdOn).fromNow()}
-        </TableCell>
+        <Tooltip title={moment(row.createdOn).format('llll')}>
+            <TableCell onClick={(e) => toDetail(row.id)}>
+                {moment(row.createdOn).fromNow()}
+            </TableCell>
+        </Tooltip>
         <TableCell onClick={(e) => toDetail(row.id)}>
             <Button variant="contained" size="small">  {row.id}</Button>
         </TableCell>

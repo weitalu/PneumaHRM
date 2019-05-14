@@ -24,10 +24,6 @@ namespace PneumaHRM.Models
         public string RequestIssuerId { get; set; }
         public Employee RequestIssuer { get; set; }
 
-        public List<LeaveRequestDeputy> Deputies { get; set; } = new List<LeaveRequestDeputy>();
-
-        public List<LeaveRequestApprove> Approves { get; set; } = new List<LeaveRequestApprove>();
-
         public List<LeaveRequestComment> Comments { get; set; } = new List<LeaveRequestComment>();
 
         public List<RequestBalanceRelation> BalanceRelations { get; set; } = new List<RequestBalanceRelation>();
@@ -49,7 +45,7 @@ namespace PneumaHRM.Models
     public class LeaveRequestStateEnum : EnumerationGraphType<LeaveRequestState> { }
     public enum LeaveRequestState
     {
-        New, Approved, Balanced, Completed
+        New, Completed
     }
     public class LeaveRequestInputType : InputObjectGraphType<LeaveRequest>
     {
@@ -88,13 +84,16 @@ namespace PneumaHRM.Models
             Field<DateTimeGraphType>("from", resolve: ctx => ctx.Source.Start);
             Field<DateTimeGraphType>("to", resolve: ctx => ctx.Source.End);
             Field<LeaveTypeEnum>("type", resolve: ctx => ctx.Source.Type);
-            Field<LeaveRequestStateEnum>("state", resolve: ctx => ctx.Source.State);
-            Field<StringGraphType>("description", resolve: ctx => ctx.Source.Description);
-            Field<BooleanGraphType>("isApprovedByMe", resolve: ctx =>
-            {
-                var hrmCtx = ctx.UserContext as HrmContext;
-                return ctx.Source.Approves.Select(x => x.ApproveBy).Contains(hrmCtx.UserContext.Identity.Name);
+            Field<StringGraphType>("state", resolve: ctx => {
+                if (ctx.Source.State == LeaveRequestState.Completed) return "Completed";
+                else if (ctx.Source.Comments.Count() == 0)
+                {
+                    return "New";
+                }
+                else
+                    return "Processing";
             });
+            Field<StringGraphType>("description", resolve: ctx => ctx.Source.Description);
             Field<BooleanGraphType>("canDelete", resolve: ctx => ctx.Source.CanDelete());
             Field<BooleanGraphType>("canDeputyBy", resolve: ctx =>
             {
@@ -117,12 +116,16 @@ namespace PneumaHRM.Models
                         return 0m;
                     }
                 });
-            AddNavigationListField(
+            Field<ListGraphType<StringGraphType>>(
                name: "deputies",
-               resolve: context => context.Source.Deputies);
-            AddNavigationListField(
+               resolve: context => new List<string>());
+            Field<ListGraphType<StringGraphType>>(
                name: "approves",
-               resolve: context => context.Source.Approves);
+               resolve: context => new List<string>());
+
+            AddNavigationListField(
+                name: "comments",
+                resolve: ctx => ctx.Source.Comments);
         }
     }
 }

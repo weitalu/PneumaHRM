@@ -34,9 +34,7 @@ namespace PneumaHRM.Models
         public DbSet<Holiday> Holidays { get; set; }
         public DbSet<LeaveBalance> LeaveBalances { get; set; }
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
-        public DbSet<LeaveRequestApprove> LeaveRequestApproves { get; set; }
         public DbSet<LeaveRequestComment> LeaveRequestComments { get; set; }
-        public DbSet<LeaveRequestDeputy> LeaveRequestDeputies { get; set; }
         public DbSet<RequestBalanceRelation> RequestBalanceRelations { get; set; }
 
         public override int SaveChanges()
@@ -54,7 +52,7 @@ namespace PneumaHRM.Models
             foreach (var entity in added)
             {
                 ((Entity)entity.Entity).CreatedBy = createBy;
-                ((Entity)entity.Entity).CreateOn = DateTime.Now;
+                ((Entity)entity.Entity).CreatedOn = DateTime.Now;
             }
             return base.SaveChanges();
         }
@@ -82,20 +80,6 @@ namespace PneumaHRM.Models
                 .WithMany(x => x.Leaves)
                 .HasForeignKey(x => x.RequestIssuerId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
-
-
-            modelBuilder.Entity<LeaveRequestDeputy>()
-                .HasOne(x => x.Request)
-                .WithMany(x => x.Deputies)
-                .HasForeignKey(x => x.RequestId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-
-            modelBuilder.Entity<LeaveRequestApprove>()
-                .HasOne(x => x.Request)
-                .WithMany(x => x.Approves)
-                .HasForeignKey(x => x.RequestId)
-                .OnDelete(DeleteBehavior.Cascade);
 
 
             modelBuilder.Entity<LeaveRequestComment>()

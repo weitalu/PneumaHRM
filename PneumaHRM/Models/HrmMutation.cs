@@ -73,8 +73,8 @@ namespace PneumaHRM.Models
                         var balanceHour = ctx.GetArgument<decimal>("balanceHour");
                         var description = ctx.GetArgument<string>("description");
                         var leaveRequst = db.LeaveRequests.Find(requestId);
-                        if (leaveRequst.State == LeaveRequestState.Completed)
-                            throw new Exception($"the leave request can't be balanced ({leaveRequst.State.ToString()})");
+                        if (!leaveRequst.CanBalance())
+                            throw new Exception($"the leave request can't be balanced");
 
 
                         var balance = new LeaveBalance()
@@ -88,8 +88,15 @@ namespace PneumaHRM.Models
                                 requestFrom = leaveRequst.Start,
                                 requestTo = leaveRequst.End,
                                 type = leaveRequst.Type.ToString(),
-                                approves = leaveRequst.Approves.Select(x => x.ApproveBy).ToList(),
-                                deputy = leaveRequst.Deputies.Select(x => x.DeputyBy).ToList()
+                                approves = leaveRequst.Comments
+                                        .Select(x => new
+                                        {
+                                            x.Content,
+                                            x.CreatedOn,
+                                            x.CreatedBy,
+                                            Type = x.Type.ToString()
+                                        })
+                                        .ToList(),
 
                             })
                         };
@@ -99,7 +106,8 @@ namespace PneumaHRM.Models
                             RequestId = requestId
                         });
                         db.LeaveBalances.Add(balance);
-                        leaveRequst.State = LeaveRequestState.Balanced;
+                        leaveRequst.State = LeaveRequestState.Completed;
+                        db.SaveChanges();
                         return balance;
                     });
             Field<LeaveBalanceType>(
@@ -141,23 +149,23 @@ namespace PneumaHRM.Models
                     {
                         Name = "leaveRequestId",
                         Description = "The Id of the target leave request to be approved"
+                    }, new QueryArgument<StringGraphType>()
+                    {
+                        Name = "comment"
                     }),
                 resolve: ctx =>
                 {
                     var db = (ctx.UserContext as HrmContext).DbContext;
-                    var userName = (ctx.UserContext as HrmContext).UserContext.Identity.Name;
                     var targetId = ctx.GetArgument<int>("leaveRequestId");
+                    var comment = ctx.GetArgument<string>("comment");
                     var target = db.LeaveRequests.Find(targetId);
                     if (target == null) return null;
-                    if (db.LeaveRequestApproves.Where(x => x.RequestId == targetId && x.ApproveBy == userName).Count() == 0)
+                    db.LeaveRequestComments.Add(new LeaveRequestComment()
                     {
-                        db.LeaveRequestApproves.Add(new LeaveRequestApprove()
-                        {
-                            ApproveBy = userName,
-                            RequestId = targetId,
-                        });
-                        target.State = LeaveRequestState.Approved;
-                    }
+                        Type = CommentType.Approve,
+                        Content = comment,
+                        RequestId = targetId,
+                    });
                     return "success";
                 });
 
@@ -168,28 +176,26 @@ namespace PneumaHRM.Models
                     {
                         Name = "leaveRequestId",
                         Description = "The Id of the target leave request to be approved"
+                    }, new QueryArgument<StringGraphType>()
+                    {
+                        Name = "comment"
                     }),
                 resolve: ctx =>
                 {
                     var db = (ctx.UserContext as HrmContext).DbContext;
                     var userName = (ctx.UserContext as HrmContext).UserContext.Identity.Name;
                     var targetId = ctx.GetArgument<int>("leaveRequestId");
+                    var comment = ctx.GetArgument<string>("comment");
                     var target = db.LeaveRequests.Find(targetId);
                     if (target == null) return "target request not exists";
                     var canDeput = target.CanDeputyBy(userName);
                     if (!canDeput.Item1) throw new GraphQL.ExecutionError(canDeput.Item2);
-                    var deput = db.LeaveRequestDeputies
-                        .Where(x => x.RequestId == targetId)
-                        .Where(x => x.DeputyBy == userName)
-                        .FirstOrDefault();
-                    if (deput == null)
+                    db.LeaveRequestComments.Add(new LeaveRequestComment()
                     {
-                        db.LeaveRequestDeputies.Add(new LeaveRequestDeputy()
-                        {
-                            DeputyBy = userName,
-                            RequestId = targetId,
-                        });
-                    }
+                        Type = CommentType.Deputy,
+                        Content = comment,
+                        RequestId = targetId,
+                    });
                     return "success";
                 });
         }

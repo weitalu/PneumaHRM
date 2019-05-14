@@ -3,12 +3,8 @@ import { gql } from 'apollo-boost'
 export default gql`
 query GetLeaveRequestDetail($id: String!) {
   leaveRequests(id: $id) {
-    deputies {
-      by
-    }
-    approves {
-      by
-    }
+    deputies
+    approves 
     id
     from
     to

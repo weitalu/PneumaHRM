@@ -46,7 +46,7 @@ namespace PneumaHRM.Models
                 {
                     var hrmCtx = ctx.UserContext as HrmContext;
                     var db = hrmCtx.DbContext;
-                    return db.LeaveRequests.Include("Deputies").Include("Approves");
+                    return db.LeaveRequests.Include("Comments");
                 });
             AddQueryConnectionField(
                 "leaveRequestsConnection",
@@ -56,6 +56,14 @@ namespace PneumaHRM.Models
                     var db = hrmCtx.DbContext;
                     return db.LeaveRequests;
                 });
+            AddQueryField(
+              "leaveRequestComments",
+              resolve: ctx =>
+              {
+                  var hrmCtx = ctx.UserContext as HrmContext;
+                  var db = hrmCtx.DbContext;
+                  return db.LeaveRequestComments;
+              });
             Field<ListGraphType<EmployeeType>>(
                 "employees",
                 resolve: ctx =>
