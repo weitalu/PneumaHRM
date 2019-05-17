@@ -49,6 +49,12 @@
     ],
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
-    }
+    },
+    "collectCoverageFrom": [
+      "**/*.{ts,tsx}",
+      "!**/exampledashboard/**",
+      "!**/node_modules/**",
+      "!**/vendor/**"
+    ]
   }
 }
