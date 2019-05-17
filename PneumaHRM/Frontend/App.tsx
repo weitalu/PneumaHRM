@@ -49,8 +49,9 @@ const routes = [
         icon: NoteAddIcon
     }
 ];
+const myLink = path => props => <NavLink to={path} {...props} />
 const toItem = route =>
-    <ListItem button component={NavLink} to={route.path}>
+    <ListItem button component={myLink(route.path)}>
         <ListItemIcon>
             <route.icon></route.icon>
         </ListItemIcon>

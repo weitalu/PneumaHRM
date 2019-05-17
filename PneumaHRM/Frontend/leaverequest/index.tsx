@@ -8,7 +8,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import tableView from './tableView'
 import detailView from './detailView';
 
-export default class extends React.Component {
+export default class extends React.Component<any, any> {
     constructor(props) {
         super(props);
 
@@ -24,7 +24,7 @@ export default class extends React.Component {
             pageSize,
             p => this.setState({ pageNum: p }),
             size => this.setState({ pageNum: 0, pageSize: size }),
-            id => this.setState({ id: id });
+            id => this.setState({ id: id }),
         );
         let detailJSX = id ? detailView(id) : <></>
 

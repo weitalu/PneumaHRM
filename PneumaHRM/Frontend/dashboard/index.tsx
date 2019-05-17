@@ -9,7 +9,7 @@ import { Query } from 'react-apollo';
 import Grid from '@material-ui/core/Grid';
 import CalendarApp from './calendarComp'
 import CreateLeaveRequestApp from './createLeaveRequestComp'
-import createRedirect from '../util/createRedirect';
+
 
 const calenderStart = "2019-01-01"
 interface internalState {
@@ -70,7 +70,7 @@ const holidayDataToInput = day => ({
   title: day.name,
   start: day.value,
   allday: true,
-  rendering: 'background'
+  rendering: 'background',
   color: '#ff9f89'
 })
 
