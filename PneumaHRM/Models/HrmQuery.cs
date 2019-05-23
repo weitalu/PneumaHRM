@@ -76,13 +76,9 @@ namespace PneumaHRM.Models
                 resolve: ctx =>
                 {
                     var hrmCtx = ctx.UserContext as HrmContext;
-                    var db = hrmCtx.DbContext;
                     var from = ctx.GetArgument<DateTime>("from");
                     var to = ctx.GetArgument<DateTime>("to");
-                    return db.Holidays
-                        .Select(x => x.Value)
-                        .ToList()
-                        .GetWorkHours(from, to);
+                    return hrmCtx.Holidays.GetWorkHours(from, to);
                 });
             Field<EmployeeType>(
                 "self",

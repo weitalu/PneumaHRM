@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using GraphQL;
 using GraphQL.Types;
@@ -12,25 +13,26 @@ namespace PneumaHRM.Controllers
     [Route("Api/[controller]")]
     public class GraphQLController : Controller
     {
-        private HrmDbContext _db { get; }
         private readonly IDocumentExecuter _documentExecuter;
         private readonly ISchema _schema;
 
-        public GraphQLController(ISchema schema, IDocumentExecuter documentExecuter, HrmDbContext db)
+        public GraphQLController(ISchema schema, IDocumentExecuter documentExecuter)
         {
             _schema = schema;
             _documentExecuter = documentExecuter;
-            _db = db;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] GraphQLQuery query)
+        public async Task<IActionResult> Post(
+            [FromBody] GraphQLQuery query,
+            [FromServices] HrmDbContext db,
+            [FromServices] List<DateTime> holidays)
         {
             if (query == null) { throw new ArgumentNullException(nameof(query)); }
             var inputs = query.Variables.ToInputs();
             var executionOptions = new ExecutionOptions
             {
-                UserContext = new HrmContext(_db, User),
+                UserContext = new HrmContext(db, User, holidays),
                 Schema = _schema,
                 OperationName = query.OperationName,
                 Query = query.Query,
@@ -40,7 +42,7 @@ namespace PneumaHRM.Controllers
 
             var result = await _documentExecuter.ExecuteAsync(executionOptions).ConfigureAwait(false);
 
-            _db.SaveChanges();
+            db.SaveChanges();
 
             if (result.Errors?.Count > 0)
             {

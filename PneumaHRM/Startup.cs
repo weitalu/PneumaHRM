@@ -53,10 +53,11 @@ namespace PneumaHRM
             EfGraphQLConventions.RegisterInContainer(services, HrmDbContext.DataModel);
             services.AddSingleton<IDocumentExecuter, EfDocumentExecuter>();
             services.AddSingleton<ISchema>(provider => new HrmSchema(new FuncDependencyResolver(provider.GetRequiredService)));
+            services.AddSingleton(x => new List<DateTime>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, HrmDbContext db)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, HrmDbContext db, List<DateTime> Holidays)
         {
             if (env.IsDevelopment())
             {
@@ -99,7 +100,7 @@ namespace PneumaHRM
                 spa.Options.SourcePath = "wwwroot";
             });
             db.SeedData();
-            ;
+            Holidays.AddRange(db.Holidays.Select(x => x.Value).ToList());
         }
 
 

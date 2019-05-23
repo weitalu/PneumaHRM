@@ -103,13 +103,9 @@ namespace PneumaHRM.Models
             Field<DecimalGraphType>("workHour",
                 resolve: ctx =>
                 {
-                    var db = (ctx.UserContext as HrmContext).DbContext;
                     if (ctx.Source.End.HasValue && ctx.Source.Start.HasValue)
                     {
-                        return db.Holidays
-                        .Select(x => x.Value)
-                        .ToList()
-                        .GetWorkHours(ctx.Source.Start.Value, ctx.Source.End.Value);
+                        return (ctx.UserContext as HrmContext).Holidays.GetWorkHours(ctx.Source.Start.Value, ctx.Source.End.Value);
                     }
                     else
                     {
