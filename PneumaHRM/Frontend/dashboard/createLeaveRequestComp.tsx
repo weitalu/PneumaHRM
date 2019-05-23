@@ -22,94 +22,93 @@ const leaveTypes =
         "OTHER"
     ]
 
-export default class extends React.Component<{ start: moment.Moment, end: moment.Moment }> {
+export default class extends React.Component<{ start: moment.Moment, end: moment.Moment }, { type: string, description: string }> {
     constructor(props) {
         super(props)
 
         this.state = {
-            leaveType: leaveTypes[0]
+            type: leaveTypes[0],
+            description: ""
         }
     }
     render() {
         let { start, end } = this.props;
         return <Query query={WORKHOURS_DATA_QUERY} variables={{ from: start.format(), to: end.format() }}>
-            {leaveRequestAppView(start, end)}
+            {({ data: { workHours }, loading }) => <Paper style={{ padding: "20px" }}>
+                <Typography variant="h5" component="h3">Create Leave Request </Typography>
+                <TextField
+                    label="Start"
+                    margin="normal"
+                    fullWidth
+                    variant="filled"
+                    value={start.format('lll')}
+                    style={{ margin: "8px" }} />
+                <TextField
+                    label="End"
+                    margin="normal"
+                    fullWidth
+                    variant="filled"
+                    value={end.format('lll')}
+                    style={{ margin: "8px" }} />
+                <TextField
+                    label="Type"
+                    margin="normal"
+                    fullWidth
+                    select
+                    variant="filled"
+                    style={{ margin: "8px" }}
+                    onChange={e => this.setState({ type: e.target.value })}
+                    value={this.state.type}
+                >
+                    {leaveTypes.map((option, index) => (
+                        <MenuItem
+                            key={option}
+                            value={option}>
+                            {option}
+                        </MenuItem>
+                    ))}
+                </TextField>
+                <TextField
+                    label="Description"
+                    fullWidth
+                    multiline
+                    onChange={e => this.setState({ description: e.target.value })}
+                    value={this.state.description}
+                    variant="filled"
+                    style={{ margin: "8px" }}
+                />
+                <TextField
+                    label="Calculated Hours"
+                    margin="normal"
+                    error={workHours === 0}
+                    value={loading ? "loading" : workHours}
+                    fullWidth
+                    InputProps={{
+                        disabled: true,
+                    }}
+                    variant="filled"
+                    style={{ margin: "8px" }}
+                />
+                <Mutation refetchQueries={["GetCalendarData", "GetPagedLeaveRequests"]}
+                    mutation={CREATE_LEAVEREQUEST_MUTATION}
+                    onCompleted={() => this.setState({ type: leaveTypes[0], description: "" })}
+                    variables={{
+                        leaveRequest: {
+                            start: start.format(),
+                            end: end.format(),
+                            type: this.state.type,
+                            description: this.state.description
+                        }
+                    }}>
+                    {(createLeaveRequest, { data, error, called }) => <>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => workHours > 0 ? createLeaveRequest() : ""}>Create</Button>
+                    </>}
+
+                </Mutation>
+            </Paper >}
         </Query>
     }
-}
-
-const leaveRequestAppView = (start, end) => ({ data: { workHours }, loading }) => {
-    let descriptionRef = { value: null };
-    let leaveTypeRef = { value: null };
-    console.log(descriptionRef.value);
-    return <Paper style={{ padding: "20px" }}>
-        <Typography variant="h5" component="h3">
-            Create Leave Request
-        </Typography>
-        <TextField
-            label="Start"
-            margin="normal"
-            fullWidth
-            variant="filled"
-            value={start.format('lll')}
-            style={{ margin: "8px" }} />
-        <TextField
-            label="End"
-            margin="normal"
-            fullWidth
-            variant="filled"
-            value={end.format('lll')}
-            style={{ margin: "8px" }} />
-        <TextField
-            label="Type"
-            margin="normal"
-            fullWidth
-            select
-            variant="filled"
-            style={{ margin: "8px" }}
-            defaultValue={leaveTypes[0]}
-            inputRef={node => leaveTypeRef = node}
-        >
-            {leaveTypes.map((option, index) => (
-                <MenuItem
-                    key={option}
-                    value={option}>
-                    {option}
-                </MenuItem>
-            ))}
-        </TextField>
-        <TextField
-            label="Description"
-            fullWidth
-            multiline
-            variant="filled"
-            style={{ margin: "8px" }}
-            inputRef={node => descriptionRef = node}
-        />
-        <TextField
-            label="Calculated Hours"
-            margin="normal"
-            error={workHours === 0}
-            value={loading ? "loading" : workHours}
-            fullWidth
-            InputProps={{
-                disabled: true,
-            }}
-            variant="filled"
-            style={{ margin: "8px" }}
-        />
-        <Mutation refetchQueries={["GetCalendarData", "GetPagedLeaveRequests"]}
-            mutation={CREATE_LEAVEREQUEST_MUTATION}
-            variables={{
-                leaveRequest: { start: start.format(), end: end.format(), type: "", description: descriptionRef ? descriptionRef.value : "" }
-            }}>
-            {(createLeaveRequest, { data, error, called }) => <>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => workHours > 0 ? createLeaveRequest() : ""}>Create</Button>
-            </>}
-
-        </Mutation>
-    </Paper >
 }
