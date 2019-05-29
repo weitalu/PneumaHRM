@@ -12,6 +12,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 
 import { Query, Mutation } from 'react-apollo';
+import gql from 'graphql-tag'
 
 import DELETE_LEAVE_REQUEST from './deleteLeaveRequest';
 import APPROVE_LEAVE_REQUEST from './approveLeaveRequest';
@@ -19,15 +20,15 @@ import DEPUTY_LEAVE_REQUEST from './deputyLeaveRequest';
 import GET_LEAVE_REQUEST_DETAIL_QUERY from './getLeaveRequestDetail';
 
 export default (id) => <Query query={GET_LEAVE_REQUEST_DETAIL_QUERY} variables={{ id: id }}>
-    {({ data: { leaveRequests }, loading }) => loading ? <>Loading</> :
+    {({ data, loading, client }) => loading ? <>Loading</> :
         <main>
             <Paper style={{ padding: "10px" }}>
                 <Typography component="h1" variant="h4" align="center">Leave Request Detail</Typography>
-                <Form data={leaveRequests[0]}></Form>
+                <Form data={data.leaveRequests[0]} />
             </Paper>
         </main>}
 </Query>
-
+const CLIENT_QUERY = gql`{ currentComment @client }`
 
 const deleteButton = (deleteLeaveRequest, { data }) => <Button
     variant="contained"
@@ -35,6 +36,7 @@ const deleteButton = (deleteLeaveRequest, { data }) => <Button
     onClick={() => deleteLeaveRequest({ refetchQueries: ["GetCalendarData", "GetPagedLeaveRequests"] })}>
     Delete
 </Button>
+
 const DeputyAction = (canDeputyBy) => (deputyLeaveRequest) => <Button
     variant="contained"
     size="small"
@@ -55,79 +57,75 @@ const CompleteAction = () => <Button
     size="small"
     style={{ marginLeft: "1px" }}
     color="primary">Complete</Button>
-const Form = (props) => {
-    let commentInput;
-    return <>
-        <Typography variant="h6" gutterBottom>
-            {props.data.owner}'s  Leave Request {props.data.id}
-        </Typography>
-        <Grid container spacing={24}>
-            <Grid item xs={12} sm={6}>
-                <TextField
-                    label="Start"
-                    fullWidth
-                    value={props.data.from}
-                />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-                <TextField
-                    label="End"
-                    value={props.data.to}
-                    fullWidth
-                />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-                <TextField
-                    label="type"
-                    fullWidth
-                    value={props.data.type}
-                />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-                <TextField
-                    label="Calculated hours"
-                    fullWidth
-                    value={props.data.workHour}
-                />
-            </Grid>
-            <Grid item xs={12}>
-                <TextField
-                    label="Description"
-                    fullWidth
-                    value={props.data.description}
-                />
-            </Grid>
+const Form = (props) => <>
+    <Typography variant="h6" gutterBottom>
+        {props.data.owner}'s  Leave Request {props.data.id}
+    </Typography>
+    <Grid container spacing={24}>
+        <Grid item xs={12} sm={6}>
+            <TextField
+                label="Start"
+                fullWidth
+                value={props.data.from}
+            />
         </Grid>
-        <Typography variant="h6" gutterBottom>
-            History / Comment
-        </Typography>
-        <Grid container spacing={24}>
-            <Grid item xs={12}>
-                <List>
-                    {props.data.comments.map(toListItem)}
-                </List>
-                <TextField
-                    label="Comment"
-                    fullWidth
-                    innerRef={node => commentInput = node}
-                />
-                <Mutation
-                    mutation={APPROVE_LEAVE_REQUEST}
-                    refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
-                    variables={{ id: props.data.id, comment: "commentInput.value" }}
-                    children={ApproveAction()} />
-                <Mutation
-                    mutation={DEPUTY_LEAVE_REQUEST}
-                    refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
-                    variables={{ id: props.data.id, comment: "commentInput.value" }}
-                    children={DeputyAction(props.data.canDeputyBy)}
-                />
-                <CompleteAction />
-            </Grid>
+        <Grid item xs={12} sm={6}>
+            <TextField
+                label="End"
+                value={props.data.to}
+                fullWidth
+            />
         </Grid>
+        <Grid item xs={12} sm={6}>
+            <TextField
+                label="type"
+                fullWidth
+                value={props.data.type}
+            />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+            <TextField
+                label="Calculated hours"
+                fullWidth
+                value={props.data.workHour}
+            />
+        </Grid>
+        <Grid item xs={12}>
+            <TextField
+                label="Description"
+                fullWidth
+                value={props.data.description}
+            />
+        </Grid>
+    </Grid>
+    <Typography variant="h6" gutterBottom>
+        History / Comment
+        </Typography>
+    <Grid container spacing={24}>
+        <Grid item xs={12}>
+            <List>
+                {props.data.comments.map(toListItem)}
+            </List>
+            <TextField
+                label="Comment"
+                fullWidth
+            />
+            <Mutation
+                mutation={APPROVE_LEAVE_REQUEST}
+                refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
+                variables={{ id: props.data.id, comment: "" }}
+                children={ApproveAction()} />
+            <Mutation
+                mutation={DEPUTY_LEAVE_REQUEST}
+                refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
+                variables={{ id: props.data.id, comment: "" }}
+                children={DeputyAction(props.data.canDeputyBy)}
+            />
+            <CompleteAction />
+        </Grid>
+    </Grid>
 
-    </>
-}
+</>
 
 const toListItem = (row, index) => <ListItem alignItems="flex-start">
     <ListItemText

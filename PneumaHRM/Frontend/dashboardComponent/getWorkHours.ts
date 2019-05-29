@@ -1,4 +1,4 @@
-import { gql } from 'apollo-boost'
+import gql from 'graphql-tag'
 
 export default gql`
 query GetWorkHours($from: DateTime!, $to: DateTime!) {

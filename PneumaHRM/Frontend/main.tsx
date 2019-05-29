@@ -6,18 +6,32 @@ import { ApolloProvider } from 'react-apollo';
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { HttpLink } from 'apollo-link-http';
+import gql from 'graphql-tag'
 
 import App from './App';
 
 const cache = new InMemoryCache();
-
+cache.writeData({
+    data: {
+        currentComment: ""
+    }
+});
+const typeDefs = `
+  extend type Query {
+    currentComment:String
+  }
+`;
 const httpLink = new HttpLink({
     uri: "/api/graphql"
 });
+
 const client = new ApolloClient({
     link: httpLink,
     cache,
+    typeDefs: typeDefs,
+    connectToDevTools :true
 });
+
 
 render(
     <ApolloProvider client={client}>

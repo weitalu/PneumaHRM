@@ -1,4 +1,4 @@
-import { gql } from 'apollo-boost'
+import gql from 'graphql-tag'
 
 export default gql`mutation Approve($id:Int!, $comment:String!){
   approveLeaveRequest(leaveRequestId:$id, comment:$comment)
