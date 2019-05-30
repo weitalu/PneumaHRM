@@ -84,7 +84,7 @@ const leaveRequestToTableRow = (toDetail) => (row, index) => (
             <Mutation
                 mutation={DELETE_LEAVE_REQUEST}
                 variables={{ requestId: row.id }}
-                refetchQueries={["GetCalendarData", "GetPagedLeaveRequests"]}>
+                refetchQueries={["GetCalendarData", "GetPagedLeaveRequests", "GetLeaveRequestDetail"]}>
                 {deleteAction(row.canDelete)}
             </Mutation>
         </TableCell>

@@ -21,40 +21,41 @@ import GET_LEAVE_REQUEST_DETAIL_QUERY from './getLeaveRequestDetail';
 
 export default (id) => <Query query={GET_LEAVE_REQUEST_DETAIL_QUERY} variables={{ id: id }}>
     {({ data, loading, client }) => loading ? <>Loading</> :
-        <main>
-            <Paper style={{ padding: "10px" }}>
-                <Typography component="h1" variant="h4" align="center">Leave Request Detail</Typography>
-                <Form data={data.leaveRequests[0]} />
-                <Typography variant="h6" gutterBottom>History / Comment</Typography>
-                <Grid container spacing={24}>
-                    <Grid item xs={12}>
-                        <List>
-                            {data.leaveRequests[0].comments.map(toListItem)}
-                        </List>
-                        <TextField
-                            label="Comment"
-                            fullWidth
-                            value={data.currentComment}
-                            onChange={e => client.writeData({ data: { currentComment: e.target.value } })}
-                        />
-                        <Mutation
-                            mutation={APPROVE_LEAVE_REQUEST}
-                            refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
-                            variables={{ id: id, comment: data.currentComment }}
-                            onCompleted={e => client.writeData({ data: { currentComment: "" } })}
-                            children={ApproveAction()} />
-                        <Mutation
-                            mutation={DEPUTY_LEAVE_REQUEST}
-                            refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
-                            variables={{ id: id, comment: data.currentComment }}
-                            onCompleted={e => client.writeData({ data: { currentComment: "" } })}
-                            children={DeputyAction(true)}
-                        />
-                        <CompleteAction />
+        data.leaveRequests.length > 0 ?
+            <main>
+                <Paper style={{ padding: "10px" }}>
+                    <Typography component="h1" variant="h4" align="center">Leave Request Detail</Typography>
+                    <Form data={data.leaveRequests[0]} />
+                    <Typography variant="h6" gutterBottom>History / Comment</Typography>
+                    <Grid container spacing={24}>
+                        <Grid item xs={12}>
+                            <List>
+                                {data.leaveRequests[0].comments.map(toListItem)}
+                            </List>
+                            <TextField
+                                label="Comment"
+                                fullWidth
+                                value={data.currentComment}
+                                onChange={e => client.writeData({ data: { currentComment: e.target.value } })}
+                            />
+                            <Mutation
+                                mutation={APPROVE_LEAVE_REQUEST}
+                                refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
+                                variables={{ id: id, comment: data.currentComment }}
+                                onCompleted={e => client.writeData({ data: { currentComment: "" } })}
+                                children={ApproveAction()} />
+                            <Mutation
+                                mutation={DEPUTY_LEAVE_REQUEST}
+                                refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
+                                variables={{ id: id, comment: data.currentComment }}
+                                onCompleted={e => client.writeData({ data: { currentComment: "" } })}
+                                children={DeputyAction(true)}
+                            />
+                            <CompleteAction />
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Paper>
-        </main>}
+                </Paper>
+            </main> : <></>}
 </Query>
 
 const DeputyAction = (canDeputyBy) => (deputyLeaveRequest) => <Button
