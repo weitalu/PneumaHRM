@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
@@ -18,46 +18,50 @@ import GET_LEAVE_REQUESTS_QUERY from './getPagedLeaveRequests';
 import DELETE_LEAVE_REQUEST from './deleteLeaveRequest';
 import ROWS_PER_PAGE_OPTIONS from '../rowsPerPageOptions';
 
-export default (pageNum = 0, pageSize = ROWS_PER_PAGE_OPTIONS[0], setPageNum, setPageSize, toDetail) => <Paper>
-    <Table>
-        <TableHead>
-            <TableRow>
-                <TableCell>Create On</TableCell>
-                <TableCell>ID</TableCell>
-                <TableCell>Leave Taker</TableCell>
-                <TableCell>From</TableCell>
-                <TableCell>To</TableCell>
-                <TableCell>WorkHour</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>State</TableCell>
-                <TableCell></TableCell>
-            </TableRow>
-        </TableHead>
-        <Query query={GET_LEAVE_REQUESTS_QUERY}
-            variables={{ skip: pageNum * pageSize, take: pageSize }}
-            fetchPolicy="cache-and-network">
-            {({ data, loading }) => loading ? <>Loading</> :
-                <>
-                    <TableBody>
-                        {data.leaveRequests.map(leaveRequestToTableRow(toDetail))}
-                    </TableBody>
-                    <TableFooter>
-                        <TableRow>
-                            <TablePagination
-                                rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
-                                colSpan={3}
-                                count={data.page.totalCount}
-                                rowsPerPage={pageSize}
-                                page={pageNum}
-                                onChangePage={(e, p) => setPageNum(p)}
-                                onChangeRowsPerPage={({ target: { value } }) => setPageSize(value)}
-                            />
-                        </TableRow>
-                    </TableFooter>
-                </>}
-        </Query>
-    </Table>
-</Paper>
+export default ({ toDetail }) => {
+    const [pageNum, setPageNum] = useState(0);
+    const [pageSize, setPageSize] = useState(ROWS_PER_PAGE_OPTIONS[0]);
+    return <Paper>
+        <Table>
+            <TableHead>
+                <TableRow>
+                    <TableCell>Create On</TableCell>
+                    <TableCell>ID</TableCell>
+                    <TableCell>Leave Taker</TableCell>
+                    <TableCell>From</TableCell>
+                    <TableCell>To</TableCell>
+                    <TableCell>WorkHour</TableCell>
+                    <TableCell>Type</TableCell>
+                    <TableCell>State</TableCell>
+                    <TableCell></TableCell>
+                </TableRow>
+            </TableHead>
+            <Query query={GET_LEAVE_REQUESTS_QUERY}
+                variables={{ skip: pageNum * pageSize, take: pageSize }}
+                fetchPolicy="cache-and-network">
+                {({ data, loading }) => loading ? <>Loading</> :
+                    <>
+                        <TableBody>
+                            {data.leaveRequests.map(leaveRequestToTableRow(toDetail))}
+                        </TableBody>
+                        <TableFooter>
+                            <TableRow>
+                                <TablePagination
+                                    rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
+                                    colSpan={3}
+                                    count={data.page.totalCount}
+                                    rowsPerPage={pageSize}
+                                    page={pageNum}
+                                    onChangePage={(e, p) => setPageNum(p)}
+                                    onChangeRowsPerPage={({ target: { value } }) => setPageSize(value)}
+                                />
+                            </TableRow>
+                        </TableFooter>
+                    </>}
+            </Query>
+        </Table>
+    </Paper>
+}
 const leaveRequestToTableRow = (toDetail) => (row, index) => (
     <TableRow key={index}>
         <Tooltip title={moment(row.createdOn).format('llll')}>
@@ -94,7 +98,7 @@ const deleteAction = (canDelete) => (deleteLeaveRequest) => <Button
     disabled={!canDelete}
     style={{ marginLeft: "1px" }}
     onClick={() => deleteLeaveRequest()}>Delete</Button>
-    
+
 const ViewAction = () => <Button
     variant="contained"
     size="small"

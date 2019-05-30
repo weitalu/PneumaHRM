@@ -5,7 +5,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-import tableView from './tableView'
+import TableView from './tableView'
 import detailView from './detailView';
 
 export default class extends React.Component<any, any> {
@@ -18,14 +18,6 @@ export default class extends React.Component<any, any> {
         let { id } = this.state;
         let { search } = this.props.location;
         if (search && !id) id = new URLSearchParams(search).get('id');
-        let { pageNum, pageSize } = this.state;
-        let tableJSX = tableView(
-            pageNum,
-            pageSize,
-            p => this.setState({ pageNum: p }),
-            size => this.setState({ pageNum: 0, pageSize: size }),
-            id => this.setState({ id: id }),
-        );
         let detailJSX = id ? detailView(id) : <></>
 
         return <>
@@ -34,12 +26,10 @@ export default class extends React.Component<any, any> {
                     Leave Request List
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
-                    {tableJSX}
+                    <TableView toDetail={id => this.setState({ id: id })} />
                 </ExpansionPanelDetails>
             </ExpansionPanel>
             {detailJSX}
         </>
     }
 };
-
-const a = (p: number) => (state, props) => ({ pageNum: p })

@@ -56,14 +56,6 @@ export default (id) => <Query query={GET_LEAVE_REQUEST_DETAIL_QUERY} variables={
             </Paper>
         </main>}
 </Query>
-const CLIENT_QUERY = gql`{ currentComment @client }`
-
-const deleteButton = (deleteLeaveRequest, { data }) => <Button
-    variant="contained"
-    color="primary"
-    onClick={() => deleteLeaveRequest({ refetchQueries: ["GetCalendarData", "GetPagedLeaveRequests"] })}>
-    Delete
-</Button>
 
 const DeputyAction = (canDeputyBy) => (deputyLeaveRequest) => <Button
     variant="contained"
