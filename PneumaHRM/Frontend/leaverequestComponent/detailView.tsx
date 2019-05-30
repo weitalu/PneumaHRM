@@ -25,6 +25,34 @@ export default (id) => <Query query={GET_LEAVE_REQUEST_DETAIL_QUERY} variables={
             <Paper style={{ padding: "10px" }}>
                 <Typography component="h1" variant="h4" align="center">Leave Request Detail</Typography>
                 <Form data={data.leaveRequests[0]} />
+                <Typography variant="h6" gutterBottom>History / Comment</Typography>
+                <Grid container spacing={24}>
+                    <Grid item xs={12}>
+                        <List>
+                            {data.leaveRequests[0].comments.map(toListItem)}
+                        </List>
+                        <TextField
+                            label="Comment"
+                            fullWidth
+                            value={data.currentComment}
+                            onChange={e => client.writeData({ data: { currentComment: e.target.value } })}
+                        />
+                        <Mutation
+                            mutation={APPROVE_LEAVE_REQUEST}
+                            refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
+                            variables={{ id: id, comment: data.currentComment }}
+                            onCompleted={e => client.writeData({ data: { currentComment: "" } })}
+                            children={ApproveAction()} />
+                        <Mutation
+                            mutation={DEPUTY_LEAVE_REQUEST}
+                            refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
+                            variables={{ id: id, comment: data.currentComment }}
+                            onCompleted={e => client.writeData({ data: { currentComment: "" } })}
+                            children={DeputyAction(true)}
+                        />
+                        <CompleteAction />
+                    </Grid>
+                </Grid>
             </Paper>
         </main>}
 </Query>
@@ -98,33 +126,6 @@ const Form = (props) => <>
             />
         </Grid>
     </Grid>
-    <Typography variant="h6" gutterBottom>
-        History / Comment
-        </Typography>
-    <Grid container spacing={24}>
-        <Grid item xs={12}>
-            <List>
-                {props.data.comments.map(toListItem)}
-            </List>
-            <TextField
-                label="Comment"
-                fullWidth
-            />
-            <Mutation
-                mutation={APPROVE_LEAVE_REQUEST}
-                refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
-                variables={{ id: props.data.id, comment: "" }}
-                children={ApproveAction()} />
-            <Mutation
-                mutation={DEPUTY_LEAVE_REQUEST}
-                refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
-                variables={{ id: props.data.id, comment: "" }}
-                children={DeputyAction(props.data.canDeputyBy)}
-            />
-            <CompleteAction />
-        </Grid>
-    </Grid>
-
 </>
 
 const toListItem = (row, index) => <ListItem alignItems="flex-start">

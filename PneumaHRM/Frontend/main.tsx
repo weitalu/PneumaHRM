@@ -16,7 +16,7 @@ cache.writeData({
         currentComment: ""
     }
 });
-const typeDefs = `
+const typeDefs = gql`
   extend type Query {
     currentComment:String
   }
@@ -29,7 +29,8 @@ const client = new ApolloClient({
     link: httpLink,
     cache,
     typeDefs: typeDefs,
-    connectToDevTools :true
+    connectToDevTools: true,
+    resolvers: {}
 });
 
 

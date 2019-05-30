@@ -2,6 +2,7 @@ import gql from 'graphql-tag'
 
 export default gql`
 query GetLeaveRequestDetail($id: String!) {
+  currentComment @client
   leaveRequests(id: $id) {
     deputies
     approves 
