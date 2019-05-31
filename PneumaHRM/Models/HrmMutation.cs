@@ -12,7 +12,7 @@ namespace PneumaHRM.Models
     {
         public HrmMutation()
         {
-            Field<LeaveRequestType>()
+            Field<LeaveRequestType, LeaveRequest>()
                 .Name("createLeaveRequest")
                 .Argument<NonNullGraphType<LeaveRequestInputType>>("leaveRequest", "The leave request you want to create.")
                 .Resolve(ctx =>
@@ -26,7 +26,7 @@ namespace PneumaHRM.Models
                     db.SaveChanges();
                     return leaveRequest;
                 });
-            Field<StringGraphType>()
+            Field<StringGraphType, string>()
                 .Name("deleteLeaveRequest")
                 .Argument<NonNullGraphType<IdGraphType>>("requestId", "")
                 .Resolve(ctx =>
@@ -40,7 +40,7 @@ namespace PneumaHRM.Models
                     db.SaveChanges();
                     return "success";
                 });
-            Field<LeaveBalanceType>()
+            Field<LeaveRequestType, LeaveRequest>()
                  .Name("completeLeaveRequest")
                  .Argument<NonNullGraphType<IdGraphType>>("requestId", "The Id of the target leave request to be balanced")
                  .Argument<DecimalGraphType>("balanceHour", "")
@@ -87,9 +87,9 @@ namespace PneumaHRM.Models
                      db.LeaveBalances.Add(balance);
                      leaveRequst.State = LeaveRequestState.Completed;
                      db.SaveChanges();
-                     return balance;
+                     return leaveRequst;
                  });
-            Field<LeaveBalanceType>()
+            Field<LeaveBalanceType, LeaveBalance>()
                 .Name("createLeaveBalance")
                 .Argument<NonNullGraphType<LeaveBalanceInputType>>("leaveBalance", "")
                 .Resolve(ctx =>
