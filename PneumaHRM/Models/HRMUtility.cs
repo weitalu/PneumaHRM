@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using GraphQL.Types;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,10 +10,34 @@ namespace PneumaHRM.Models
 {
     public static class HRMUtility
     {
-        public static (bool, string) CanDeputyBy(this LeaveRequest target, string deputy)
+        public static void Approve(this LeaveRequest target, string comment)
+        {
+            target.State = LeaveRequestState.Processing;
+            target.Comments.Add(new LeaveRequestComment()
+            {
+                Type = CommentType.Approve,
+                Content = comment,
+                Request = target
+            });
+        }
+        public static void Deputy(this LeaveRequest target, string comment)
+        {
+            target.State = LeaveRequestState.Processing;
+            target.Comments.Add(new LeaveRequestComment()
+            {
+                Type = CommentType.Deputy,
+                Content = comment,
+                Request = target
+            });
+        }
+        public static (bool able, string reason) CanApproveBy(this LeaveRequest target, string approver)
         {
             if (target == null) return (false, "target not exist");
-            // if (target.RequestIssuerId == deputy) return (false, "can't deputy yourself");
+            return (true, "");
+        }
+        public static (bool able, string reason) CanDeputyBy(this LeaveRequest target, string deputy)
+        {
+            if (target == null) return (false, "target not exist");
             return (true, "");
         }
         public static bool CanDelete(this LeaveRequest target)

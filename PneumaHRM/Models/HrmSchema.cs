@@ -1,4 +1,4 @@
-﻿using GraphQL;
+using GraphQL;
 using GraphQL.Types;
 using System;
 using System.Collections.Generic;

@@ -49,7 +49,7 @@ export default (id) => <Query query={GET_LEAVE_REQUEST_DETAIL_QUERY} variables={
                                 refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
                                 variables={{ id: id, comment: data.currentComment }}
                                 onCompleted={e => client.writeData({ data: { currentComment: "" } })}
-                                children={DeputyAction(true)}
+                                children={DeputyAction(data.leaveRequests[0].canDeputyBy)}
                             />
                             <CompleteAction />
                         </Grid>

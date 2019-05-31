@@ -142,61 +142,39 @@ namespace PneumaHRM.Models
                         db.SaveChanges();
                         return balance;
                     });
-            Field<StringGraphType>(
-                "approveLeaveRequest",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<IntGraphType>>()
-                    {
-                        Name = "leaveRequestId",
-                        Description = "The Id of the target leave request to be approved"
-                    }, new QueryArgument<StringGraphType>()
-                    {
-                        Name = "comment"
-                    }),
-                resolve: ctx =>
-                {
-                    var db = (ctx.UserContext as HrmContext).DbContext;
-                    var targetId = ctx.GetArgument<int>("leaveRequestId");
-                    var comment = ctx.GetArgument<string>("comment");
-                    var target = db.LeaveRequests.Find(targetId);
-                    if (target == null) return null;
-                    db.LeaveRequestComments.Add(new LeaveRequestComment()
-                    {
-                        Type = CommentType.Approve,
-                        Content = comment,
-                        RequestId = targetId,
-                    });
-                    return "success";
-                });
-
-            Field<StringGraphType>(
-                "deputyLeaveRequest",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<IntGraphType>>()
-                    {
-                        Name = "leaveRequestId",
-                        Description = "The Id of the target leave request to be approved"
-                    }, new QueryArgument<StringGraphType>()
-                    {
-                        Name = "comment"
-                    }),
-                resolve: ctx =>
+            Field<LeaveRequestType, LeaveRequest>()
+                .Name("approveLeaveRequest")
+                .Argument<NonNullGraphType<IntGraphType>>("leaveRequestId", "The Id of the target leave request to be approved")
+                .Argument<StringGraphType>("comment", "the comment")
+                .Resolve(ctx =>
                 {
                     var db = (ctx.UserContext as HrmContext).DbContext;
                     var userName = (ctx.UserContext as HrmContext).UserContext.Identity.Name;
                     var targetId = ctx.GetArgument<int>("leaveRequestId");
                     var comment = ctx.GetArgument<string>("comment");
                     var target = db.LeaveRequests.Find(targetId);
-                    if (target == null) return "target request not exists";
+                    var canDeput = target.CanApproveBy(userName);
+                    if (!canDeput.able) throw new GraphQL.ExecutionError(canDeput.reason);
+                    target.Approve(comment);
+                    db.SaveChanges();
+                    return target;
+                });
+            Field<LeaveRequestType, LeaveRequest>()
+                .Name("deputyLeaveRequest")
+                .Argument<NonNullGraphType<IntGraphType>>("leaveRequestId", "The Id of the target leave request to be approved")
+                .Argument<StringGraphType>("comment", "the comment")
+                .Resolve(ctx =>
+                {
+                    var db = (ctx.UserContext as HrmContext).DbContext;
+                    var userName = (ctx.UserContext as HrmContext).UserContext.Identity.Name;
+                    var targetId = ctx.GetArgument<int>("leaveRequestId");
+                    var comment = ctx.GetArgument<string>("comment");
+                    var target = db.LeaveRequests.Find(targetId);
                     var canDeput = target.CanDeputyBy(userName);
-                    if (!canDeput.Item1) throw new GraphQL.ExecutionError(canDeput.Item2);
-                    db.LeaveRequestComments.Add(new LeaveRequestComment()
-                    {
-                        Type = CommentType.Deputy,
-                        Content = comment,
-                        RequestId = targetId,
-                    });
-                    return "success";
+                    if (!canDeput.able) throw new GraphQL.ExecutionError(canDeput.reason);
+                    target.Deputy(comment);
+                    db.SaveChanges();
+                    return target;
                 });
         }
     }

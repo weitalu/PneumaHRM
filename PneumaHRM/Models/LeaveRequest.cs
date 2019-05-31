@@ -45,7 +45,7 @@ namespace PneumaHRM.Models
     public class LeaveRequestStateEnum : EnumerationGraphType<LeaveRequestState> { }
     public enum LeaveRequestState
     {
-        New, Completed
+        New, Processing, Completed
     }
     public class LeaveRequestInputType : InputObjectGraphType<LeaveRequest>
     {
@@ -84,15 +84,7 @@ namespace PneumaHRM.Models
             Field<DateTimeGraphType>("from", resolve: ctx => ctx.Source.Start);
             Field<DateTimeGraphType>("to", resolve: ctx => ctx.Source.End);
             Field<LeaveTypeEnum>("type", resolve: ctx => ctx.Source.Type);
-            Field<StringGraphType>("state", resolve: ctx => {
-                if (ctx.Source.State == LeaveRequestState.Completed) return "Completed";
-                else if (ctx.Source.Comments.Count() == 0)
-                {
-                    return "New";
-                }
-                else
-                    return "Processing";
-            });
+            Field<LeaveRequestStateEnum>("state", resolve: ctx => ctx.Source.State);
             Field<StringGraphType>("description", resolve: ctx => ctx.Source.Description);
             Field<BooleanGraphType>("canDelete", resolve: ctx => ctx.Source.CanDelete());
             Field<BooleanGraphType>("canDeputyBy", resolve: ctx =>

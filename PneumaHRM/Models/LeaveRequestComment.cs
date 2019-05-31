@@ -21,6 +21,23 @@ namespace PneumaHRM.Models
     {
         None, Approve, CancelApprove, Deputy, CancelDeputy
     }
+    public class LeaveRequestCommentInputType : InputObjectGraphType<LeaveRequestComment>
+    {
+        public LeaveRequestCommentInputType()
+        {
+            Name = "LeaveRequestCommentInput";
+            Description = "A leave request comment";
+
+            Field<StringGraphType>()
+                .Name("content")
+                .Description("content of the comment")
+                .Resolve(ctx => ctx.Source.Content);
+            Field<NonNullGraphType<IntGraphType>>()
+                .Name("leaveRequestId")
+                .Description("the target to comment")
+                .Resolve(ctx => ctx.Source.RequestId);
+        }
+    }
     public class LeaveRequestCommentType : EfObjectGraphType<LeaveRequestComment>
     {
         public LeaveRequestCommentType(IEfGraphQLService service) : base(service)
