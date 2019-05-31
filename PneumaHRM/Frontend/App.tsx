@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import AppBar from '@material-ui/core/AppBar'
 import Badge from '@material-ui/core/Badge'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -24,9 +24,9 @@ import { NavLink, Route } from 'react-router-dom'
 import { Query } from 'react-apollo';
 
 import APP_QUERY from './query'
-import DashboardComponent from './dashboardComponent/index'
-import LeaveRequestComponent from './leaverequestComponent/index'
-import LeaveBalanceComponent from './leavebalanceComponent/index'
+const DashboardComponent = lazy(() => import('./dashboardComponent/index'));
+const LeaveRequestComponent = lazy(() => import('./leaverequestComponent/index'));
+const LeaveBalanceComponent = lazy(() => import('./leavebalanceComponent/index'));
 const drawerWidth = 240;
 const routes = [
     {
@@ -114,11 +114,13 @@ class App extends React.Component<{ myName: string }> {
             </Drawer>
 
             <main style={{ marginLeft: `${drawerWidth}px`, marginTop: "100px" }}>
-                {routes.map((route, index) =>
-                    (<Route
-                        path={route.path}
-                        exact={route.exact}
-                        component={route.content} />))}
+                <Suspense fallback={<div>Loading...</div>}>
+                    {routes.map((route, index) =>
+                        (<Route
+                            path={route.path}
+                            exact={route.exact}
+                            component={route.content} />))}
+                </Suspense>
             </main>
         </div>
     }
