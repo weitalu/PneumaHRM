@@ -19,7 +19,27 @@ namespace PneumaHRM.Models
 
         public List<RequestBalanceRelation> RequestRelations { get; set; } = new List<RequestBalanceRelation>();
     }
+    public class LeaveBalanceInputType : InputObjectGraphType<LeaveBalance>
+    {
+        public LeaveBalanceInputType()
+        {
+            Name = "LeaveBalanceInput";
+            Description = "A leave balance";
 
+            Field<NonNullGraphType<DecimalGraphType>>()
+                .Name("value")
+                .Description("balance value")
+                .Resolve(ctx => ctx.Source.Value);
+            Field<NonNullGraphType<StringGraphType>>()
+                .Name("description")
+                .Description("description of balance")
+                .Resolve(ctx => ctx.Source.Description);
+            Field<NonNullGraphType<StringGraphType>>()
+                .Name("to")
+                .Description("balance to who")
+                .Resolve(ctx => ctx.Source.OwnerId);
+        }
+    }
     public class LeaveBalanceType : ObjectGraphType<LeaveBalance>
     {
         public LeaveBalanceType()

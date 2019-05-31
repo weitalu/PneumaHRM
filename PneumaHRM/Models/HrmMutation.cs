@@ -12,15 +12,10 @@ namespace PneumaHRM.Models
     {
         public HrmMutation()
         {
-            Field<LeaveRequestType>(
-                "createLeaveRequest",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<LeaveRequestInputType>>()
-                    {
-                        Name = "leaveRequest",
-                        Description = "The leave request you want to create.",
-                    }),
-                resolve: ctx =>
+            Field<LeaveRequestType>()
+                .Name("createLeaveRequest")
+                .Argument<NonNullGraphType<LeaveRequestInputType>>("leaveRequest", "The leave request you want to create.")
+                .Resolve(ctx =>
                 {
                     var hrmCtx = ctx.UserContext as HrmContext;
                     var db = hrmCtx.DbContext;
@@ -31,14 +26,10 @@ namespace PneumaHRM.Models
                     db.SaveChanges();
                     return leaveRequest;
                 });
-            Field<StringGraphType>(
-                "deleteLeaveRequest",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<IdGraphType>>()
-                    {
-                        Name = "requestId"
-                    }),
-                resolve: ctx =>
+            Field<StringGraphType>()
+                .Name("deleteLeaveRequest")
+                .Argument<NonNullGraphType<IdGraphType>>("requestId", "")
+                .Resolve(ctx =>
                 {
                     var hrmCtx = ctx.UserContext as HrmContext;
                     var db = hrmCtx.DbContext;
@@ -49,99 +40,66 @@ namespace PneumaHRM.Models
                     db.SaveChanges();
                     return "success";
                 });
-
-            Field<LeaveBalanceType>(
-                "balanceLeaveRequest",
-                arguments: new QueryArguments(
-                    new QueryArgument<NonNullGraphType<IdGraphType>>()
-                    {
-                        Name = "requestId",
-                        Description = "The Id of the target leave request to be balanced"
-                    },
-                    new QueryArgument<NonNullGraphType<DecimalGraphType>>()
-                    {
-                        Name = "balanceHour"
-                    },
-                    new QueryArgument<NonNullGraphType<StringGraphType>>()
-                    {
-                        Name = "description"
-                    }),
-                    resolve: ctx =>
-                    {
-                        var db = (ctx.UserContext as HrmContext).DbContext;
-                        var requestId = ctx.GetArgument<int>("requestId");
-                        var balanceHour = ctx.GetArgument<decimal>("balanceHour");
-                        var description = ctx.GetArgument<string>("description");
-                        var leaveRequst = db.LeaveRequests.Find(requestId);
-                        if (!leaveRequst.CanBalance())
-                            throw new Exception($"the leave request can't be balanced");
+            Field<LeaveBalanceType>()
+                 .Name("completeLeaveRequest")
+                 .Argument<NonNullGraphType<IdGraphType>>("requestId", "The Id of the target leave request to be balanced")
+                 .Argument<DecimalGraphType>("balanceHour", "")
+                 .Argument<StringGraphType>("description", "")
+                 .Resolve(ctx =>
+                 {
+                     var db = (ctx.UserContext as HrmContext).DbContext;
+                     var requestId = ctx.GetArgument<int>("requestId");
+                     var balanceHour = ctx.GetArgument<decimal>("balanceHour");
+                     var description = ctx.GetArgument<string>("description");
+                     var leaveRequst = db.LeaveRequests.Find(requestId);
+                     if (!leaveRequst.CanBalance())
+                         throw new Exception($"the leave request can't be balanced");
 
 
-                        var balance = new LeaveBalance()
-                        {
-                            Value = balanceHour,
-                            OwnerId = leaveRequst.RequestIssuerId,
-                            Description = description,
-                            SnapShotData = JsonConvert.SerializeObject(new
-                            {
-                                requestId = leaveRequst.Id,
-                                requestFrom = leaveRequst.Start,
-                                requestTo = leaveRequst.End,
-                                type = leaveRequst.Type.ToString(),
-                                approves = leaveRequst.Comments
-                                        .Select(x => new
-                                        {
-                                            x.Content,
-                                            x.CreatedOn,
-                                            x.CreatedBy,
-                                            Type = x.Type.ToString()
-                                        })
-                                        .ToList(),
+                     var balance = new LeaveBalance()
+                     {
+                         Value = balanceHour,
+                         OwnerId = leaveRequst.RequestIssuerId,
+                         Description = description,
+                         SnapShotData = JsonConvert.SerializeObject(new
+                         {
+                             requestId = leaveRequst.Id,
+                             requestFrom = leaveRequst.Start,
+                             requestTo = leaveRequst.End,
+                             type = leaveRequst.Type.ToString(),
+                             approves = leaveRequst.Comments
+                                     .Select(x => new
+                                     {
+                                         x.Content,
+                                         x.CreatedOn,
+                                         x.CreatedBy,
+                                         Type = x.Type.ToString()
+                                     })
+                                     .ToList(),
 
-                            })
-                        };
-                        balance.RequestRelations.Add(new RequestBalanceRelation()
-                        {
-                            Balance = balance,
-                            RequestId = requestId
-                        });
-                        db.LeaveBalances.Add(balance);
-                        leaveRequst.State = LeaveRequestState.Completed;
-                        db.SaveChanges();
-                        return balance;
-                    });
-            Field<LeaveBalanceType>(
-                "createLeaveBalance",
-                arguments: new QueryArguments(
-                    new QueryArgument<StringGraphType>()
-                    {
-                        Name = "userName"
-                    },
-                    new QueryArgument<NonNullGraphType<DecimalGraphType>>()
-                    {
-                        Name = "balanceHour"
-                    },
-                    new QueryArgument<NonNullGraphType<StringGraphType>>()
-                    {
-                        Name = "description"
-                    }),
-                resolve: ctx =>
-                    {
-                        var hrmCtx = ctx.UserContext as HrmContext;
-                        var db = hrmCtx.DbContext;
-                        var userName = ctx.GetArgument<string>("userName") ?? hrmCtx.UserContext.Identity.Name;
-                        var balanceHour = ctx.GetArgument<decimal>("balanceHour");
-                        var description = ctx.GetArgument<string>("description");
-                        var balance = new LeaveBalance()
-                        {
-                            Value = balanceHour,
-                            OwnerId = userName,
-                            Description = description,
-                        };
-                        db.LeaveBalances.Add(balance);
-                        db.SaveChanges();
-                        return balance;
-                    });
+                         })
+                     };
+                     balance.RequestRelations.Add(new RequestBalanceRelation()
+                     {
+                         Balance = balance,
+                         RequestId = requestId
+                     });
+                     db.LeaveBalances.Add(balance);
+                     leaveRequst.State = LeaveRequestState.Completed;
+                     db.SaveChanges();
+                     return balance;
+                 });
+            Field<LeaveBalanceType>()
+                .Name("createLeaveBalance")
+                .Argument<NonNullGraphType<LeaveBalanceInputType>>("leaveBalance", "")
+                .Resolve(ctx =>
+                {
+                    var db = (ctx.UserContext as HrmContext).DbContext;
+                    var balance = ctx.GetArgument<LeaveBalance>("leaveBalance");
+                    db.LeaveBalances.Add(balance);
+                    db.SaveChanges();
+                    return balance;
+                });
             Field<LeaveRequestType, LeaveRequest>()
                 .Name("approveLeaveRequest")
                 .Argument<NonNullGraphType<IntGraphType>>("leaveRequestId", "The Id of the target leave request to be approved")
