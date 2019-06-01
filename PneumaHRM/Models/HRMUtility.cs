@@ -1,4 +1,6 @@
-﻿using GraphQL.Types;
+﻿using GraphQL.Builders;
+using GraphQL.Types;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -10,6 +12,79 @@ namespace PneumaHRM.Models
 {
     public static class HRMUtility
     {
+        public static FieldBuilder<object, TReturnType> BuildMutationResolver<TReturnType, TArg>(
+            this FieldBuilder<object, TReturnType> builder,
+            Func<HrmContext, TArg, TReturnType> func)
+        {
+            return builder.Resolve(x =>
+           {
+               var arg = x.GetArgument<TArg>("input");
+               var hrmCtx = x.UserContext as HrmContext;
+               var result = func(hrmCtx, arg);
+               hrmCtx.DbContext.SaveChanges();
+               return result;
+           });
+        }
+
+        public static string DeleteLeaveRequest(HrmContext ctx, int id)
+        {
+            var request = ctx.DbContext.LeaveRequests.Find(id);
+            if (!request.CanDelete()) throw new Exception($"{request.State.ToString()} can't not be deleted");
+            ctx.DbContext.LeaveRequests.Remove(request);
+            return "success";
+        }
+        public static LeaveRequest CreateLeaveRequest(HrmContext ctx, LeaveRequest request)
+        {
+            request.RequestIssuerId = ctx.UserContext.Identity.Name;
+            ctx.DbContext.LeaveRequests.Add(request);
+            return request;
+        }
+        public static LeaveRequest CompleteLeaveRequest(HrmContext ctx, int id)
+        {
+            var leaveRequst = ctx.DbContext.LeaveRequests.Find(id);
+            if (!leaveRequst.CanBalance())
+                throw new Exception($"the leave request can't be balanced");
+
+
+            var balance = new LeaveBalance()
+            {
+                Value = -ctx.Holidays.GetWorkHours(leaveRequst.Start.Value, leaveRequst.End.Value),
+                OwnerId = leaveRequst.RequestIssuerId,
+                Description = "A completed Leave Request",
+                SnapShotData = JsonConvert.SerializeObject(new
+                {
+                    requestId = leaveRequst.Id,
+                    requestFrom = leaveRequst.Start,
+                    requestTo = leaveRequst.End,
+                    type = leaveRequst.Type.ToString(),
+                    approves = leaveRequst.Comments
+                            .Select(x => new
+                            {
+                                x.Content,
+                                x.CreatedOn,
+                                x.CreatedBy,
+                                Type = x.Type.ToString()
+                            })
+                            .ToList(),
+
+                })
+            };
+            balance.RequestRelations.Add(new RequestBalanceRelation()
+            {
+                Balance = balance,
+                RequestId = id
+            });
+            ctx.DbContext.LeaveBalances.Add(balance);
+            leaveRequst.State = LeaveRequestState.Completed;
+            return leaveRequst;
+        }
+
+        public static LeaveBalance CreateLeaveBalance(HrmContext ctx, LeaveBalance balance)
+        {
+            ctx.DbContext.Add(balance);
+            return balance;
+        }
+
         public static void Approve(this LeaveRequest target, string comment)
         {
             target.State = LeaveRequestState.Processing;
@@ -20,6 +95,7 @@ namespace PneumaHRM.Models
                 Request = target
             });
         }
+
         public static void Deputy(this LeaveRequest target, string comment)
         {
             target.State = LeaveRequestState.Processing;
@@ -48,6 +124,7 @@ namespace PneumaHRM.Models
         {
             return target != null && (target.State == LeaveRequestState.Completed);
         }
+
         public static decimal GetWorkHours(this List<DateTime> holidays, DateTime start, DateTime end)
         {
             decimal result = 0m;

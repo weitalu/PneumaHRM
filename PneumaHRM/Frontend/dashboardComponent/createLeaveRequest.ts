@@ -2,7 +2,7 @@
 import gql from 'graphql-tag'
 
 export default gql`mutation CreateLeaveRequest($leaveRequest:LeaveRequestInput!){
-    createLeaveRequest(leaveRequest:$leaveRequest){ 
+    createLeaveRequest(input:$leaveRequest){ 
         from 
         to 
         id 

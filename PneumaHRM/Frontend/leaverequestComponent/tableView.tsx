@@ -37,8 +37,7 @@ export default ({ toDetail }) => {
                 </TableRow>
             </TableHead>
             <Query query={GET_LEAVE_REQUESTS_QUERY}
-                variables={{ skip: pageNum * pageSize, take: pageSize }}
-                fetchPolicy="cache-and-network">
+                variables={{ skip: pageNum * pageSize, take: pageSize }}>
                 {({ data, loading }) => loading ? <>Loading</> :
                     <>
                         <TableBody>

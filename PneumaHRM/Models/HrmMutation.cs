@@ -1,4 +1,5 @@
-﻿using GraphQL.Types;
+﻿using GraphQL.Builders;
+using GraphQL.Types;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
@@ -12,94 +13,27 @@ namespace PneumaHRM.Models
     {
         public HrmMutation()
         {
+
             Field<LeaveRequestType, LeaveRequest>()
-                .Name("createLeaveRequest")
-                .Argument<NonNullGraphType<LeaveRequestInputType>>("leaveRequest", "The leave request you want to create.")
-                .Resolve(ctx =>
-                {
-                    var hrmCtx = ctx.UserContext as HrmContext;
-                    var db = hrmCtx.DbContext;
-                    var userName = hrmCtx.UserContext.Identity.Name;
-                    var leaveRequest = ctx.GetArgument<LeaveRequest>("leaveRequest");
-                    leaveRequest.RequestIssuerId = userName;
-                    db.LeaveRequests.Add(leaveRequest);
-                    db.SaveChanges();
-                    return leaveRequest;
-                });
+                 .Name("createLeaveRequest")
+                 .Argument<NonNullGraphType<LeaveRequestInputType>>("input", "The leave request you want to create.")
+                 .BuildMutationResolver<LeaveRequest, LeaveRequest>(HRMUtility.CreateLeaveRequest);
+
             Field<StringGraphType, string>()
                 .Name("deleteLeaveRequest")
-                .Argument<NonNullGraphType<IdGraphType>>("requestId", "")
-                .Resolve(ctx =>
-                {
-                    var hrmCtx = ctx.UserContext as HrmContext;
-                    var db = hrmCtx.DbContext;
-                    var requestId = ctx.GetArgument<int>("requestId");
-                    var request = db.LeaveRequests.Find(requestId);
-                    if (!request.CanDelete()) throw new Exception($"{request.State.ToString()} can't not be deleted");
-                    db.LeaveRequests.Remove(request);
-                    db.SaveChanges();
-                    return "success";
-                });
+                .Argument<NonNullGraphType<IdGraphType>>("input", "The leave request id  you want to delete")
+                .BuildMutationResolver<string, int>(HRMUtility.DeleteLeaveRequest);
+
             Field<LeaveRequestType, LeaveRequest>()
                  .Name("completeLeaveRequest")
-                 .Argument<NonNullGraphType<IdGraphType>>("requestId", "The Id of the target leave request to be balanced")
-                 .Argument<DecimalGraphType>("balanceHour", "")
-                 .Argument<StringGraphType>("description", "")
-                 .Resolve(ctx =>
-                 {
-                     var db = (ctx.UserContext as HrmContext).DbContext;
-                     var requestId = ctx.GetArgument<int>("requestId");
-                     var balanceHour = ctx.GetArgument<decimal>("balanceHour");
-                     var description = ctx.GetArgument<string>("description");
-                     var leaveRequst = db.LeaveRequests.Find(requestId);
-                     if (!leaveRequst.CanBalance())
-                         throw new Exception($"the leave request can't be balanced");
+                 .Argument<NonNullGraphType<IdGraphType>>("input", "The Id of the target leave request to be complete")
+                 .BuildMutationResolver<LeaveRequest, int>(HRMUtility.CompleteLeaveRequest);
 
-
-                     var balance = new LeaveBalance()
-                     {
-                         Value = balanceHour,
-                         OwnerId = leaveRequst.RequestIssuerId,
-                         Description = description,
-                         SnapShotData = JsonConvert.SerializeObject(new
-                         {
-                             requestId = leaveRequst.Id,
-                             requestFrom = leaveRequst.Start,
-                             requestTo = leaveRequst.End,
-                             type = leaveRequst.Type.ToString(),
-                             approves = leaveRequst.Comments
-                                     .Select(x => new
-                                     {
-                                         x.Content,
-                                         x.CreatedOn,
-                                         x.CreatedBy,
-                                         Type = x.Type.ToString()
-                                     })
-                                     .ToList(),
-
-                         })
-                     };
-                     balance.RequestRelations.Add(new RequestBalanceRelation()
-                     {
-                         Balance = balance,
-                         RequestId = requestId
-                     });
-                     db.LeaveBalances.Add(balance);
-                     leaveRequst.State = LeaveRequestState.Completed;
-                     db.SaveChanges();
-                     return leaveRequst;
-                 });
             Field<LeaveBalanceType, LeaveBalance>()
                 .Name("createLeaveBalance")
-                .Argument<NonNullGraphType<LeaveBalanceInputType>>("leaveBalance", "")
-                .Resolve(ctx =>
-                {
-                    var db = (ctx.UserContext as HrmContext).DbContext;
-                    var balance = ctx.GetArgument<LeaveBalance>("leaveBalance");
-                    db.LeaveBalances.Add(balance);
-                    db.SaveChanges();
-                    return balance;
-                });
+                .Argument<NonNullGraphType<LeaveBalanceInputType>>("input", "The balance you want to create")
+                .BuildMutationResolver<LeaveBalance, LeaveBalance>(HRMUtility.CreateLeaveBalance);
+
             Field<LeaveRequestType, LeaveRequest>()
                 .Name("approveLeaveRequest")
                 .Argument<NonNullGraphType<IntGraphType>>("leaveRequestId", "The Id of the target leave request to be approved")
