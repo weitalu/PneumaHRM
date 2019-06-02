@@ -8,13 +8,10 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
+
 
 import { Query, Mutation } from 'react-apollo';
-import gql from 'graphql-tag'
 
-import DELETE_LEAVE_REQUEST from './deleteLeaveRequest';
 import APPROVE_LEAVE_REQUEST from './approveLeaveRequest';
 import DEPUTY_LEAVE_REQUEST from './deputyLeaveRequest';
 import GET_LEAVE_REQUEST_DETAIL_QUERY from './getLeaveRequestDetail';

@@ -52,7 +52,7 @@ export default ({ toDetail }) => {
                                     rowsPerPage={pageSize}
                                     page={pageNum}
                                     onChangePage={(e, p) => setPageNum(p)}
-                                    onChangeRowsPerPage={({ target: { value } }) => setPageSize(value)}
+                                    onChangeRowsPerPage={({ target: { value } }) =>{ setPageSize(value as any); setPageNum(0); }}
                                 />
                             </TableRow>
                         </TableFooter>

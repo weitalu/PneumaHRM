@@ -13,60 +13,32 @@ namespace PneumaHRM.Models
         {
             AddQueryField(
                 "holidays",
-                resolve: ctx =>
-                {
-                    var hrmCtx = ctx.UserContext as HrmContext;
-                    var db = hrmCtx.DbContext;
-                    return db.Holidays;
-                });
+                resolve: ctx => (ctx.UserContext as HrmContext).DbContext.Holidays);
+
             AddQueryField(
                 "leaveBalances",
-                resolve: ctx =>
-                {
-                    var hrmCtx = ctx.UserContext as HrmContext;
-                    var db = hrmCtx.DbContext;
-                    return db.LeaveBalances.Include("RequestRelations");
-                });
+                resolve: ctx => (ctx.UserContext as HrmContext).DbContext.LeaveBalances.Include("RequestRelations"));
+
             AddQueryConnectionField(
                 "leaveBalancesConnection",
-                resolve: ctx =>
-                {
-                    var hrmCtx = ctx.UserContext as HrmContext;
-                    var db = hrmCtx.DbContext;
-                    return db.LeaveBalances.Include("RequestRelations");
-                });
+                resolve: ctx => (ctx.UserContext as HrmContext).DbContext.LeaveBalances.Include("RequestRelations"));
+
             AddQueryField(
                 "leaveRequests",
-                resolve: ctx =>
-                {
-                    var hrmCtx = ctx.UserContext as HrmContext;
-                    var db = hrmCtx.DbContext;
-                    return db.LeaveRequests.Include("Comments");
-                });
+                resolve: ctx => (ctx.UserContext as HrmContext).DbContext.LeaveRequests.Include("Comments"));
+
             AddQueryConnectionField(
                 "leaveRequestsConnection",
-                resolve: ctx =>
-                {
-                    var hrmCtx = ctx.UserContext as HrmContext;
-                    var db = hrmCtx.DbContext;
-                    return db.LeaveRequests;
-                });
+                resolve: ctx => (ctx.UserContext as HrmContext).DbContext.LeaveRequests);
+
             AddQueryField(
               "leaveRequestComments",
-              resolve: ctx =>
-              {
-                  var hrmCtx = ctx.UserContext as HrmContext;
-                  var db = hrmCtx.DbContext;
-                  return db.LeaveRequestComments;
-              });
+              resolve: ctx => (ctx.UserContext as HrmContext).DbContext.LeaveRequestComments);
+
             Field<ListGraphType<EmployeeType>>(
                 "employees",
-                resolve: ctx =>
-                {
-                    var hrmCtx = ctx.UserContext as HrmContext;
-                    var db = hrmCtx.DbContext;
-                    return db.Employees.Include("Balances").ToList();
-                });
+                resolve: ctx => (ctx.UserContext as HrmContext).DbContext.Employees.Include("Balances").ToList());
+
             Field<DecimalGraphType>(
                 "workHours",
                  arguments: new QueryArguments(

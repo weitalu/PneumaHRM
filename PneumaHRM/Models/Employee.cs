@@ -23,26 +23,10 @@ namespace PneumaHRM.Models
             base(graphQlService)
         {
             Field<StringGraphType>("userName", resolve: x => x.Source.ADPrincipalName.Split('\\')[1]);
+
             AddNavigationListField(
                 name: "balances",
                 resolve: context => context.Source.Balances);
-            Field<ListGraphType<LeaveBalanceType>>("leaveBalances",
-              resolve: context =>
-              {
-                  var db = (context.UserContext as HrmContext).DbContext;
-                  var userName = (context.UserContext as HrmContext).UserContext.Identity.Name;
-                  return db.LeaveBalances.Where(x => x.Owner.ADPrincipalName == userName).ToList();
-              },
-              description: "your leave balance history");
-
-            Field<ListGraphType<LeaveRequestType>>("leaveRequests",
-              resolve: context =>
-              {
-                  var db = (context.UserContext as HrmContext).DbContext;
-                  var userName = (context.UserContext as HrmContext).UserContext.Identity.Name;
-                  return db.LeaveRequests.Where(x => x.RequestIssuer.ADPrincipalName == userName).ToList();
-              },
-              description: "your current leave requests");
 
             Field<DecimalGraphType>("currentBalance",
                 resolve: ctx => ctx.Source.Balances.Sum(x => x.Value));
