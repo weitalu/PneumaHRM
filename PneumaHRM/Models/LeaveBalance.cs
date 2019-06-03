@@ -28,16 +28,13 @@ namespace PneumaHRM.Models
 
             Field<NonNullGraphType<DecimalGraphType>>()
                 .Name("value")
-                .Description("balance value")
-                .Resolve(ctx => ctx.Source.Value);
+                .Description("balance value");
             Field<NonNullGraphType<StringGraphType>>()
                 .Name("description")
-                .Description("description of balance")
-                .Resolve(ctx => ctx.Source.Description);
+                .Description("description of balance");
             Field<NonNullGraphType<StringGraphType>>()
-                .Name("to")
-                .Description("balance to who")
-                .Resolve(ctx => ctx.Source.OwnerId);
+                .Name("ownerId")
+                .Description("balance to who");
         }
     }
     public class LeaveBalanceType : ObjectGraphType<LeaveBalance>
@@ -50,7 +47,7 @@ namespace PneumaHRM.Models
             Field(x => x.SnapShotData, true);
             Field<DateTimeGraphType>("createdOn", resolve: ctx => ctx.Source.CreatedOn);
             Field<StringGraphType>("createdBy", resolve: ctx => ctx.Source.CreatedBy);
-            Field<StringGraphType>("owner", resolve: ctx => ctx.Source.OwnerId);
+            Field<StringGraphType>("ownerId", resolve: ctx => ctx.Source.OwnerId);
         }
     }
 }
