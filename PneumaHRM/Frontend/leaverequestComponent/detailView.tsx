@@ -14,6 +14,7 @@ import { Query, Mutation } from 'react-apollo';
 
 import APPROVE_LEAVE_REQUEST from './approveLeaveRequest';
 import DEPUTY_LEAVE_REQUEST from './deputyLeaveRequest';
+import COMMENT_LEAVE_REQUEST from './commentLeaveRequest';
 import GET_LEAVE_REQUEST_DETAIL_QUERY from './getLeaveRequestDetail';
 
 export default (id) => <Query query={GET_LEAVE_REQUEST_DETAIL_QUERY} variables={{ id: id }}>
@@ -36,6 +37,12 @@ export default (id) => <Query query={GET_LEAVE_REQUEST_DETAIL_QUERY} variables={
                                 onChange={e => client.writeData({ data: { currentComment: e.target.value } })}
                             />
                             <Mutation
+                                mutation={COMMENT_LEAVE_REQUEST}
+                                refetchQueries={["GetLeaveRequestDetail"]}
+                                variables={{ input: { requestId: id, content: data.currentComment } }}
+                                onCompleted={e => client.writeData({ data: { currentComment: "" } })}
+                                children={CommentAction} />
+                            <Mutation
                                 mutation={APPROVE_LEAVE_REQUEST}
                                 refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
                                 variables={{ input: { requestId: id, content: data.currentComment } }}
@@ -54,6 +61,13 @@ export default (id) => <Query query={GET_LEAVE_REQUEST_DETAIL_QUERY} variables={
                 </Paper>
             </main> : <></>}
 </Query>
+
+const CommentAction = (commentLeaveRequest) => <Button
+    variant="contained"
+    size="small"
+    style={{ marginLeft: "1px" }}
+    color="primary"
+    onClick={() => commentLeaveRequest()}>Comment</Button>
 
 const DeputyAction = (canDeputyBy) => (deputyLeaveRequest) => <Button
     variant="contained"
@@ -75,6 +89,8 @@ const CompleteAction = () => <Button
     size="small"
     style={{ marginLeft: "1px" }}
     color="primary">Complete</Button>
+
+
 const Form = (props) => <>
     <Typography variant="h6" gutterBottom>
         {props.data.owner}'s  Leave Request {props.data.id}

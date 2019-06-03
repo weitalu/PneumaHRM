@@ -107,6 +107,15 @@ namespace PneumaHRM.Models
             ctx.DbContext.Add(comment);
             return target;
         }
+
+        public static LeaveRequest CommentLeaveRequest(HrmContext ctx, LeaveRequestComment comment)
+        {
+            var target = ctx.DbContext.LeaveRequests.Find(comment.RequestId);
+            if (target == null) throw new GraphQL.ExecutionError("request not exists");
+            comment.Type = CommentType.None;
+            ctx.DbContext.Add(comment);
+            return target;
+        }
         public static (bool able, string reason) CanApproveBy(this LeaveRequest target, string approver)
         {
             if (target == null) return (false, "target not exist");

@@ -43,6 +43,11 @@ namespace PneumaHRM.Models
                  .Name("completeLeaveRequest")
                  .Argument<NonNullGraphType<IdGraphType>>("input", "The Id of the target leave request to be complete")
                  .BuildMutationResolver<LeaveRequest, int>(HRMUtility.CompleteLeaveRequest);
+
+            Field<LeaveRequestType, LeaveRequest>()
+                 .Name("commentLeaveRequest")
+                 .Argument<NonNullGraphType<LeaveRequestCommentInputType>>("input", "The Id of the target leave request to be complete")
+                 .BuildMutationResolver<LeaveRequest, LeaveRequestComment>(HRMUtility.CommentLeaveRequest);
         }
     }
 }
