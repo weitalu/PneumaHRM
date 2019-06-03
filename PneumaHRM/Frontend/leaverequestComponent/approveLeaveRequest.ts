@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
-export default gql`mutation Approve($id:Int!, $comment:String!){
-  approveLeaveRequest(leaveRequestId:$id, comment:$comment){
+export default gql`mutation Approve($input:LeaveRequestCommentInput!){
+  approveLeaveRequest(input:$input){
     state
     comments {
       content

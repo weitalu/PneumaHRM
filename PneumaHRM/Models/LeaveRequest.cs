@@ -56,21 +56,17 @@ namespace PneumaHRM.Models
 
             Field<NonNullGraphType<DateTimeGraphType>>()
                 .Name("start")
-                .Description("start time of the leave")
-                .Resolve(ctx => ctx.Source.Start);
+                .Description("start time of the leave");
             Field<NonNullGraphType<DateTimeGraphType>>()
                 .Name("end")
-                .Description("end time of the leave")
-                .Resolve(ctx => ctx.Source.End);
+                .Description("end time of the leave");
             Field<NonNullGraphType<LeaveTypeEnum>>()
                 .Name("type")
                 .Description("the type of the leave")
-                .Resolve(ctx => ctx.Source.Type)
                 .DefaultValue(LeaveType.Annual);
             Field<NonNullGraphType<StringGraphType>>()
                 .Name("description")
-                .Description("the description of the leave")
-                .Resolve(ctx => ctx.Source.Description);
+                .Description("the description of the leave");
         }
     }
     public class LeaveRequestType : EfObjectGraphType<LeaveRequest>

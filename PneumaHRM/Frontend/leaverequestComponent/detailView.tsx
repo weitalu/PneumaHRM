@@ -38,13 +38,13 @@ export default (id) => <Query query={GET_LEAVE_REQUEST_DETAIL_QUERY} variables={
                             <Mutation
                                 mutation={APPROVE_LEAVE_REQUEST}
                                 refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
-                                variables={{ id: id, comment: data.currentComment }}
+                                variables={{ input: { requestId: id, content: data.currentComment } }}
                                 onCompleted={e => client.writeData({ data: { currentComment: "" } })}
                                 children={ApproveAction()} />
                             <Mutation
                                 mutation={DEPUTY_LEAVE_REQUEST}
                                 refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
-                                variables={{ id: id, comment: data.currentComment }}
+                                variables={{ input: { requestId: id, content: data.currentComment } }}
                                 onCompleted={e => client.writeData({ data: { currentComment: "" } })}
                                 children={DeputyAction(data.leaveRequests[0].canDeputyBy)}
                             />

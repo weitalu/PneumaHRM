@@ -27,15 +27,14 @@ namespace PneumaHRM.Models
         {
             Name = "LeaveRequestCommentInput";
             Description = "A leave request comment";
-
+            //https://github.com/graphql-dotnet/graphql-dotnet/issues/1017 
+            //Resolve(ctx => ctx.Source.Content); not support, the field name must the same with property name
             Field<StringGraphType>()
                 .Name("content")
-                .Description("content of the comment")
-                .Resolve(ctx => ctx.Source.Content);
+                .Description("content of the comment");
             Field<NonNullGraphType<IntGraphType>>()
-                .Name("leaveRequestId")
-                .Description("the target to comment")
-                .Resolve(ctx => ctx.Source.RequestId);
+                .Name("requestId")
+                .Description("the target to comment");
         }
     }
     public class LeaveRequestCommentType : EfObjectGraphType<LeaveRequestComment>

@@ -75,36 +75,37 @@ namespace PneumaHRM.Models
                 RequestId = id
             });
             ctx.DbContext.LeaveBalances.Add(balance);
+            ctx.DbContext.LeaveRequestComments.Add(new LeaveRequestComment()
+            {
+                Content = "Completed",
+                Type = CommentType.None,
+                RequestId = leaveRequst.Id
+            });
             leaveRequst.State = LeaveRequestState.Completed;
             return leaveRequst;
         }
-
         public static LeaveBalance CreateLeaveBalance(HrmContext ctx, LeaveBalance balance)
         {
             ctx.DbContext.Add(balance);
             return balance;
         }
-
-        public static void Approve(this LeaveRequest target, string comment)
+        public static LeaveRequest ApproveLeaveRequest(HrmContext ctx, LeaveRequestComment comment)
         {
-            target.State = LeaveRequestState.Processing;
-            target.Comments.Add(new LeaveRequestComment()
-            {
-                Type = CommentType.Approve,
-                Content = comment,
-                Request = target
-            });
+            var target = ctx.DbContext.LeaveRequests.Find(comment.RequestId);
+            var canApprove = target.CanApproveBy(ctx.UserContext.Identity.Name);
+            if (!canApprove.able) throw new GraphQL.ExecutionError(canApprove.reason);
+            comment.Type = CommentType.Approve;
+            ctx.DbContext.Add(comment);
+            return target;
         }
-
-        public static void Deputy(this LeaveRequest target, string comment)
+        public static LeaveRequest DeputyLeaveRequest(HrmContext ctx, LeaveRequestComment comment)
         {
-            target.State = LeaveRequestState.Processing;
-            target.Comments.Add(new LeaveRequestComment()
-            {
-                Type = CommentType.Deputy,
-                Content = comment,
-                Request = target
-            });
+            var target = ctx.DbContext.LeaveRequests.Find(comment.RequestId);
+            var canDeput = target.CanDeputyBy(ctx.UserContext.Identity.Name);
+            if (!canDeput.able) throw new GraphQL.ExecutionError(canDeput.reason);
+            comment.Type = CommentType.Deputy;
+            ctx.DbContext.Add(comment);
+            return target;
         }
         public static (bool able, string reason) CanApproveBy(this LeaveRequest target, string approver)
         {
