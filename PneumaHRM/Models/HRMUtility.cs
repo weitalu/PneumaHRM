@@ -133,7 +133,7 @@ namespace PneumaHRM.Models
         }
         public static bool CanBalance(this LeaveRequest target)
         {
-            return target != null && (target.State == LeaveRequestState.Completed);
+            return target != null && (target.State != LeaveRequestState.Completed);
         }
 
         public static decimal GetWorkHours(this List<DateTime> holidays, DateTime start, DateTime end)

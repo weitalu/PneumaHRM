@@ -15,6 +15,7 @@ import { Query, Mutation } from 'react-apollo';
 import APPROVE_LEAVE_REQUEST from './approveLeaveRequest';
 import DEPUTY_LEAVE_REQUEST from './deputyLeaveRequest';
 import COMMENT_LEAVE_REQUEST from './commentLeaveRequest';
+import COMPLETE_LEAVE_REQUEST from './completeLeaveRequest';
 import GET_LEAVE_REQUEST_DETAIL_QUERY from './getLeaveRequestDetail';
 
 export default (id) => <Query query={GET_LEAVE_REQUEST_DETAIL_QUERY} variables={{ id: id }}>
@@ -38,7 +39,7 @@ export default (id) => <Query query={GET_LEAVE_REQUEST_DETAIL_QUERY} variables={
                             />
                             <Mutation
                                 mutation={COMMENT_LEAVE_REQUEST}
-                                refetchQueries={["GetLeaveRequestDetail"]}
+                                refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
                                 variables={{ input: { requestId: id, content: data.currentComment } }}
                                 onCompleted={e => client.writeData({ data: { currentComment: "" } })}
                                 children={CommentAction} />
@@ -53,41 +54,45 @@ export default (id) => <Query query={GET_LEAVE_REQUEST_DETAIL_QUERY} variables={
                                 refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
                                 variables={{ input: { requestId: id, content: data.currentComment } }}
                                 onCompleted={e => client.writeData({ data: { currentComment: "" } })}
-                                children={DeputyAction(data.leaveRequests[0].canDeputyBy)}
-                            />
-                            <CompleteAction />
+                                children={DeputyAction(data.leaveRequests[0].canDeputyBy)} />
+                            <Mutation
+                                mutation={COMPLETE_LEAVE_REQUEST}
+                                refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
+                                variables={{ input: id }}
+                                children={CompleteAction} />
                         </Grid>
                     </Grid>
                 </Paper>
             </main> : <></>}
 </Query>
 
-const CommentAction = (commentLeaveRequest) => <Button
+const CommentAction = (execute) => <Button
     variant="contained"
     size="small"
     style={{ marginLeft: "1px" }}
     color="primary"
-    onClick={() => commentLeaveRequest()}>Comment</Button>
+    onClick={() => execute()}>Comment</Button>
 
-const DeputyAction = (canDeputyBy) => (deputyLeaveRequest) => <Button
+const DeputyAction = (canDeputyBy) => (execute) => <Button
     variant="contained"
     size="small"
     disabled={!canDeputyBy}
     style={{ marginLeft: "1px" }}
     color="primary"
-    onClick={() => deputyLeaveRequest()}>Deputy</Button>
+    onClick={() => execute()}>Deputy</Button>
 
-const ApproveAction = () => (approve) => <Button
+const ApproveAction = () => (execute) => <Button
     variant="contained"
     size="small"
     style={{ marginLeft: "1px" }}
     color="primary"
-    onClick={() => approve()}>Approve</Button>
+    onClick={() => execute()}>Approve</Button>
 
-const CompleteAction = () => <Button
+const CompleteAction = (execute) => <Button
     variant="contained"
     size="small"
     style={{ marginLeft: "1px" }}
+    onClick={() => execute()}
     color="primary">Complete</Button>
 
 
