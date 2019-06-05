@@ -95,6 +95,7 @@ namespace PneumaHRM.Models
             var canApprove = target.CanApproveBy(ctx.UserContext.Identity.Name);
             if (!canApprove.able) throw new GraphQL.ExecutionError(canApprove.reason);
             comment.Type = CommentType.Approve;
+            target.State = LeaveRequestState.Processing;
             ctx.DbContext.Add(comment);
             return target;
         }
@@ -104,10 +105,10 @@ namespace PneumaHRM.Models
             var canDeput = target.CanDeputyBy(ctx.UserContext.Identity.Name);
             if (!canDeput.able) throw new GraphQL.ExecutionError(canDeput.reason);
             comment.Type = CommentType.Deputy;
+            target.State = LeaveRequestState.Processing;
             ctx.DbContext.Add(comment);
             return target;
         }
-
         public static LeaveRequest CommentLeaveRequest(HrmContext ctx, LeaveRequestComment comment)
         {
             var target = ctx.DbContext.LeaveRequests.Find(comment.RequestId);
