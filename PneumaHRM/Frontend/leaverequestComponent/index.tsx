@@ -22,7 +22,8 @@ export default class extends React.Component<any, any> {
 
         return <>
             <ExpansionPanel defaultExpanded>
-                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                <ExpansionPanelSummary
+                    expandIcon={<ExpandMoreIcon />}>
                     Leave Request List
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails>
