@@ -19,7 +19,7 @@ namespace PneumaHRM.Models
 
     public enum CommentType
     {
-        None, Approve, CancelApprove, Deputy, CancelDeputy
+        Comment, Approve, CancelApprove, Deputy, CancelDeputy
     }
     public class LeaveRequestCommentInputType : InputObjectGraphType<LeaveRequestComment>
     {

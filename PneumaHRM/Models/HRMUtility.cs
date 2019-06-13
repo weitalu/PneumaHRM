@@ -78,7 +78,7 @@ namespace PneumaHRM.Models
             ctx.DbContext.LeaveRequestComments.Add(new LeaveRequestComment()
             {
                 Content = "Completed",
-                Type = CommentType.None,
+                Type = CommentType.Comment,
                 RequestId = leaveRequst.Id
             });
             leaveRequst.State = LeaveRequestState.Completed;
@@ -113,7 +113,7 @@ namespace PneumaHRM.Models
         {
             var target = ctx.DbContext.LeaveRequests.Find(comment.RequestId);
             if (target == null) throw new GraphQL.ExecutionError("request not exists");
-            comment.Type = CommentType.None;
+            comment.Type = CommentType.Comment;
             ctx.DbContext.Add(comment);
             return target;
         }

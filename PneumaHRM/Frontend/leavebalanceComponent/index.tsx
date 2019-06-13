@@ -11,16 +11,29 @@ import GET_EMPLOYEE from './getEmployee';
 import GET_LEAVE_BALANCE from './getLeaveBalances';
 
 export default () => {
-    let [currentDetail, updateCurrentDetail] = useState("");
-    let displayDetail = currentDetail === employee.userName;
     return <Query query={GET_EMPLOYEE}>
-        {({ data, loading }) => loading ? <>Loading</> : data.employees.map((employee) =>
-            <ExpansionPanel expanded={displayDetail}>
-                <ExpansionPanelSummary
-                    expandIcon={<ExpandMoreIcon onClick={() => updateCurrentDetail(employee.userName)} />}>
-                    {employee.userName}, now have {employee.currentBalance} leave balance</ExpansionPanelSummary>
-                {displayDetail ? <ExpansionPanelDetails>This is balance Detail</ExpansionPanelDetails> : <></>}
-
-            </ExpansionPanel>)}
+        {LoadingFallback(data => data.employees.map(x => <Employee employee={x} />))}
     </Query>
 }
+
+const LoadingFallback = (Comp: (data: any, client: any) => JSX.Element) => ({ data, loading, client }) => loading ? <>Loading</> : Comp(data, client);
+
+const Employee = ({ employee }) => {
+    let [state, setState] = useState(false);
+    let detail = state ? LoadEmployeeBalance(employee) : <></>
+    return <ExpansionPanel onChange={(e, expended) => setState(expended)}>
+        <ExpansionPanelSummary
+            expandIcon={<ExpandMoreIcon />}>
+            {employee.userName}, current leave hours : {employee.currentBalance}
+        </ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+            {detail}
+        </ExpansionPanelDetails>
+    </ExpansionPanel>
+}
+
+const LoadEmployeeBalance = employee => <Query query={GET_LEAVE_BALANCE}
+    variables={{ userName: employee.userName }}
+>
+    {LoadingFallback(data => JSON.stringify(data))}
+</Query>
