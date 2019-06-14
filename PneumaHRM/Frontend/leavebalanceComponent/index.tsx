@@ -1,20 +1,33 @@
 import React, { useState } from 'react';
 
+import Button from '@material-ui/core/Button'
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Typography from '@material-ui/core/Typography';
 
 import { Query, Mutation } from 'react-apollo';
 
 import GET_EMPLOYEE from './getEmployee';
 import GET_LEAVE_BALANCE from './getLeaveBalances';
 import BalanceTableView from './balancesTableView';
+import CreateLeaveBalanceDialog from './createLeaveBalance'
 
 export default () => {
-    return <Query query={GET_EMPLOYEE}>
-        {LoadingFallback(data => data.employees.map(x => <Employee employee={x} />))}
-    </Query>
+    const [creating, setCreating] = useState(false);
+    return <div>
+        <Button
+            color="primary"
+            variant="contained"
+            onClick={() => setCreating(true)}
+            children={'Create'} />
+        <CreateLeaveBalanceDialog open={creating} onClose={() => setCreating(false)} />
+        <Query query={GET_EMPLOYEE}>
+            {LoadingFallback(data => data.employees.map(x => <Employee employee={x} />))}
+        </Query>
+
+    </div>
 }
 
 const LoadingFallback = (Comp: (data: any, client: any) => JSX.Element) => ({ data, loading, client }) => loading ? <>Loading</> : Comp(data, client);
@@ -23,9 +36,10 @@ const Employee = ({ employee }) => {
     let [state, setState] = useState(false);
     let detail = state ? LoadEmployeeBalance(employee) : <></>
     return <ExpansionPanel onChange={(e, expended) => setState(expended)}>
-        <ExpansionPanelSummary
-            expandIcon={<ExpandMoreIcon />}>
-            {employee.userName}, current leave hours : {employee.currentBalance}
+        <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography>
+                {employee.userName}, current leave hours : {employee.currentBalance}
+            </Typography>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails>
             {detail}

@@ -50,7 +50,7 @@ namespace PneumaHRM.Models
             {
                 Value = -ctx.Holidays.GetWorkHours(leaveRequst.Start.Value, leaveRequst.End.Value),
                 OwnerId = leaveRequst.RequestIssuerId,
-                Description = "A completed Leave Request",
+                Description = $"A completed Leave Request Start from {leaveRequst.Start.Value}",
                 SnapShotData = JsonConvert.SerializeObject(new
                 {
                     requestId = leaveRequst.Id,
