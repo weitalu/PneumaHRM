@@ -9,6 +9,7 @@ import { Query, Mutation } from 'react-apollo';
 
 import GET_EMPLOYEE from './getEmployee';
 import GET_LEAVE_BALANCE from './getLeaveBalances';
+import BalanceTableView from './balancesTableView';
 
 export default () => {
     return <Query query={GET_EMPLOYEE}>
@@ -35,5 +36,5 @@ const Employee = ({ employee }) => {
 const LoadEmployeeBalance = employee => <Query query={GET_LEAVE_BALANCE}
     variables={{ userName: employee.userName }}
 >
-    {LoadingFallback(data => JSON.stringify(data))}
+    {LoadingFallback(data => BalanceTableView(data.leaveBalances))}
 </Query>
