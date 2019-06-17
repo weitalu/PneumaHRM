@@ -67,7 +67,22 @@ export default () => <Query query={APP_QUERY}>
     }}
 </Query>
 class App extends React.Component<{ myName: string }> {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false };
+      }
+    static getDerivedStateFromError(error) {
+        console.log(error);
+        // Update state so the next render will show the fallback UI.
+        return { hasError: true };
+    }
+
+
     render() {
+        if (this.state.hasError) {
+            // You can render any custom fallback UI
+            return <h1 id="HasError">Something went wrong.</h1>;
+        }
         return <div>
             <CssBaseline />
             <AppBar position="absolute"

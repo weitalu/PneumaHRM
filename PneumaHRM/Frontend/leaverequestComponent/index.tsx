@@ -20,7 +20,7 @@ export default class extends React.Component<any, any> {
         if (search && !id) id = new URLSearchParams(search).get('id');
         let detailJSX = id ? detailView(id) : <></>
 
-        return <>
+        return <div id="LeaveRequest">
             <ExpansionPanel defaultExpanded>
                 <ExpansionPanelSummary
                     expandIcon={<ExpandMoreIcon />}>
@@ -31,6 +31,6 @@ export default class extends React.Component<any, any> {
                 </ExpansionPanelDetails>
             </ExpansionPanel>
             {detailJSX}
-        </>
+        </div>
     }
 };

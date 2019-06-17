@@ -33,7 +33,7 @@ export default class extends React.Component<any, internalState> {
           return <div>Loading ...</div>;
         }
         return (
-          <div>
+          <div id="Dashboard">
 
             <Grid container spacing={24}>
               <Grid item xs={3}>

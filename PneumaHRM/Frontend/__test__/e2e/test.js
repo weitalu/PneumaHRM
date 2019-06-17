@@ -13,20 +13,20 @@ describe('PneumasoftHRM End to End Test Suite', done => {
     it('has dashboard', done => {
         console.log('render dashboard');
         driver.get('https://localhost:44364/dashboard')
-            .then(() => driver.wait(until.elementLocated({ tagName: "main" })))
-            .then(() => done());
+            .then(() => driver.wait(until.elementLocated({ id: "Dashboard" })))
+            .then(() => done())
     });
 
     it('has leave balance', done => {
         console.log('render leave balance');
         driver.get('https://localhost:44364/leavebalance')
-        .then(() => driver.wait(until.elementLocated({ tagName: "main" })))
-        .then(() => done());
+            .then(() => driver.wait(until.elementLocated({ id: "LeaveBalance" })))
+            .then(() => done());
     })
     it('has leave request', done => {
         console.log('render leave request');
         driver.get('https://localhost:44364/leaverequest')
-        .then(() => driver.wait(until.elementLocated({ tagName: "main" })))
-        .then(() => done());
+            .then(() => driver.wait(until.elementLocated({ id: "LeaveRequest" })))
+            .then(() => done());
     })
 });

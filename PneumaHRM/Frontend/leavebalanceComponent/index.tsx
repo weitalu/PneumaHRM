@@ -17,7 +17,7 @@ import CreateLeaveBalanceDialog from './createLeaveBalance'
 
 export default () => {
     const [creating, setCreating] = useState(false);
-    return <div>
+    return <div id="LeaveBalance">
         <Button
             color="primary"
             variant="contained"
