@@ -1,6 +1,7 @@
 {
   "scripts": {
     "test": "jest",
+    "test:e2e":"mocha --timeout 20000 __test__/e2e/test.js",
     "build": "parcel build index.html -d ../wwwroot --detailed-report",
     "download": "apollo service:download graphql-schema.json --skipSSLValidation --endpoint=http://localhost:57755/api/graphql/",
     "codegen": "apollo client:codegen --outputFlat --addTypename --target=typescript --includes=src/**/*.ts --endpoint=http://localhost:57755/api/graphql/"
@@ -11,11 +12,16 @@
     "@types/react-dom": "^16.8.4",
     "@types/react-router-dom": "^4.3.2",
     "apollo": "^2.8.3",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "chromedriver": "^75.0.0",
     "jest": "^24.8.0",
     "jest-dom": "^3.2.2",
+    "mocha": "^6.1.4",
     "parcel": "^1.12.3",
     "react-testing-library": "^7.0.0",
     "sass": "^1.19.0",
+    "selenium-webdriver": "^4.0.0-alpha.3",
     "ts-jest": "^24.0.2",
     "typescript": "^3.4.3"
   },
