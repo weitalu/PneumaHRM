@@ -6,7 +6,9 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 
 chai.use(chaiAsPromised);
-const driver = new webdriver.Builder().forBrowser('chrome').build();
+let pref = new webdriver.logging.Preferences();
+pref.setLevel('browser', webdriver.logging.Level.ALL);
+let driver = new webdriver.Builder().forBrowser('chrome').setLoggingPrefs(pref).build();
 const expect = chai.expect;
 
 describe('PneumasoftHRM End to End Test Suite', done => {
@@ -19,7 +21,7 @@ describe('PneumasoftHRM End to End Test Suite', done => {
 
     it('has leave balance', done => {
         console.log('render leave balance');
-        driver.get('https://localhost:44364/leavebalance')
+        driver.get('https://localhost:44364/balance')
             .then(() => driver.wait(until.elementLocated({ id: "LeaveBalance" })))
             .then(() => done());
     })
