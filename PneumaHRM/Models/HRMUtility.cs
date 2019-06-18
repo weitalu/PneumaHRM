@@ -120,12 +120,12 @@ namespace PneumaHRM.Models
         public static (bool able, string reason) CanApproveBy(this LeaveRequest target, string approver)
         {
             if (target == null) return (false, "target not exist");
-            return (true, "");
+            return (target.CanBalance(), "");
         }
         public static (bool able, string reason) CanDeputyBy(this LeaveRequest target, string deputy)
         {
             if (target == null) return (false, "target not exist");
-            return (true, "");
+            return (target.CanBalance(), "");
         }
         public static bool CanDelete(this LeaveRequest target)
         {

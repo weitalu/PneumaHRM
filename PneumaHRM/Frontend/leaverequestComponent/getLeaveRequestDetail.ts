@@ -16,6 +16,8 @@ query GetLeaveRequestDetail($id: String!) {
     description
     workHour
     canDeputyBy
+    canApproveBy
+    canBalance
     comments {
       content
       createdBy

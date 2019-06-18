@@ -48,7 +48,7 @@ export default (id) => <Query query={GET_LEAVE_REQUEST_DETAIL_QUERY} variables={
                                 refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
                                 variables={{ input: { requestId: id, content: data.currentComment } }}
                                 onCompleted={e => client.writeData({ data: { currentComment: "" } })}
-                                children={ApproveAction()} />
+                                children={ApproveAction(data.leaveRequests[0].canApproveBy)} />
                             <Mutation
                                 mutation={DEPUTY_LEAVE_REQUEST}
                                 refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
@@ -57,9 +57,9 @@ export default (id) => <Query query={GET_LEAVE_REQUEST_DETAIL_QUERY} variables={
                                 children={DeputyAction(data.leaveRequests[0].canDeputyBy)} />
                             <Mutation
                                 mutation={COMPLETE_LEAVE_REQUEST}
-                                refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail"]}
+                                refetchQueries={["GetPagedLeaveRequests", "GetLeaveRequestDetail","GetLeaveBalance","GetEmployee"]}
                                 variables={{ input: id }}
-                                children={CompleteAction} />
+                                children={CompleteAction(data.leaveRequests[0].canBalance)} />
                         </Grid>
                     </Grid>
                 </Paper>
@@ -81,16 +81,18 @@ const DeputyAction = (canDeputyBy) => (execute) => <Button
     color="primary"
     onClick={() => execute()}>Deputy</Button>
 
-const ApproveAction = () => (execute) => <Button
+const ApproveAction = (enable) => (execute) => <Button
     variant="contained"
     size="small"
+    disabled={!enable}
     style={{ marginLeft: "1px" }}
     color="primary"
     onClick={() => execute()}>Approve</Button>
 
-const CompleteAction = (execute) => <Button
+const CompleteAction =(enable)=> (execute) => <Button
     variant="contained"
     size="small"
+    disabled={!enable}
     style={{ marginLeft: "1px" }}
     onClick={() => execute()}
     color="primary">Complete</Button>

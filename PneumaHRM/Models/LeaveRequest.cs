@@ -83,6 +83,7 @@ namespace PneumaHRM.Models
             Field<LeaveRequestStateEnum>("state", resolve: ctx => ctx.Source.State);
             Field<StringGraphType>("description", resolve: ctx => ctx.Source.Description);
             Field<BooleanGraphType>("canDelete", resolve: ctx => ctx.Source.CanDelete());
+            Field<BooleanGraphType>("canApproveBy", resolve: ctx => ctx.Source.CanApproveBy("").able);
             Field<BooleanGraphType>("canDeputyBy", resolve: ctx =>
             {
                 var username = (ctx.UserContext as HrmContext).UserContext.Identity.Name;
@@ -100,6 +101,7 @@ namespace PneumaHRM.Models
                         return 0m;
                     }
                 });
+            Field<BooleanGraphType>("canBalance", resolve: ctx => ctx.Source.CanBalance());
             Field<ListGraphType<StringGraphType>>(
                name: "deputies",
                resolve: context => new List<string>());
