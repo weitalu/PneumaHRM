@@ -91,8 +91,7 @@ namespace PneumaHRM
                 });
             services.AddHttpContextAccessor();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services
-                .AddEntityFrameworkSqlServer()
+            services.AddEntityFrameworkSqlite()
                 .AddDbContext<HrmDbContext>();
             foreach (var type in GetGraphQlTypes())
             {

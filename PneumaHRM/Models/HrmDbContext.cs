@@ -13,7 +13,7 @@ namespace PneumaHRM.Models
         static HrmDbContext()
         {
             var builder = new DbContextOptionsBuilder();
-            builder.UseSqlServer("fake");
+            builder.UseSqlite("fake");
             using (var context = new HrmDbContext(builder.Options))
             {
                 DataModel = context.Model;
@@ -59,8 +59,7 @@ namespace PneumaHRM.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(
-                @"Server=(localdb)\mssqllocaldb;Database=PneumaHRM;Integrated Security=True");
+            optionsBuilder.UseSqlite("Filename=TestDatabase.db");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
