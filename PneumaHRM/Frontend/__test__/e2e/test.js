@@ -8,10 +8,13 @@ const chaiAsPromised = require('chai-as-promised');
 chai.use(chaiAsPromised);
 let pref = new webdriver.logging.Preferences();
 pref.setLevel('browser', webdriver.logging.Level.ALL);
-let driver = new webdriver.Builder().forBrowser('chrome').setLoggingPrefs(pref).build();
 const expect = chai.expect;
 
 describe('PneumasoftHRM End to End Test Suite', done => {
+    let driver
+    beforeEach(()=>{
+        driver = new webdriver.Builder().forBrowser('chrome').setLoggingPrefs(pref).build();
+    })
     it('has dashboard', done => {
         console.log('render dashboard');
         driver.get('https://localhost:44364/dashboard')
