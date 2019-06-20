@@ -16,7 +16,7 @@ import moment from 'moment';
 import { Query, Mutation } from 'react-apollo';
 import GET_LEAVE_REQUESTS_QUERY from './getPagedLeaveRequests';
 import DELETE_LEAVE_REQUEST from './deleteLeaveRequest';
-import ROWS_PER_PAGE_OPTIONS from '../rowsPerPageOptions';
+import ROWS_PER_PAGE_OPTIONS from '../../rowsPerPageOptions';
 
 export default ({ toDetail }) => {
     const [pageNum, setPageNum] = useState(0);

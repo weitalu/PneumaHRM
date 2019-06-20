@@ -10,7 +10,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 import gql from 'graphql-tag'
 import { Query, Mutation } from 'react-apollo';
-import LoadingFallback from '../util/loadingFallback';
+import LoadingFallback from '../../util/loadingFallback';
 import GET_EMPLOYEE from './getEmployee';
 
 export const CREATE_LEAVE_BALANCE = gql`mutation CreateLeaveBalance($balance:LeaveBalanceInput!) {

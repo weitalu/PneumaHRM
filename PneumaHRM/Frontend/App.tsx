@@ -22,28 +22,28 @@ import { NavLink, Route } from 'react-router-dom'
 import { Query } from 'react-apollo';
 
 import APP_QUERY from './query'
-const DashboardComponent = lazy(() => import('./dashboardComponent/index'));
-const LeaveRequestComponent = lazy(() => import('./leaverequestComponent/index'));
-const LeaveBalanceComponent = lazy(() => import('./leavebalanceComponent/index'));
+const DashboardPage = lazy(() => import('./pages/dashboard/index'));
+const LeaveRequestPage = lazy(() => import('./pages/leaverequest/index'));
+const LeaveBalancePage = lazy(() => import('./pages/leavebalance/index'));
 const drawerWidth = 240;
 const routes = [
     {
         path: "/dashboard",
         exact: true,
         header: () => "Dashboard",
-        content: DashboardComponent,
+        content: DashboardPage,
         icon: DashboardIcon
     },
     {
         path: "/balance",
         header: () => "Leave Balance",
-        content: LeaveBalanceComponent,
+        content: LeaveBalancePage,
         icon: AccountBalance
     },
     {
         path: "/leaverequest",
         header: () => "Leave Request",
-        content: LeaveRequestComponent,
+        content: LeaveRequestPage,
         icon: NoteAddIcon
     }
 ];

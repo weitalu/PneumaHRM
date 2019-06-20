@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography';
 
 import { Query, Mutation } from 'react-apollo';
 
-import LoadingFallback from '../util/loadingFallback';
+import LoadingFallback from '../../util/loadingFallback';
 import GET_EMPLOYEE from './getEmployee';
 import GET_LEAVE_BALANCE from './getLeaveBalances';
 import BalanceTableView from './balancesTableView';
